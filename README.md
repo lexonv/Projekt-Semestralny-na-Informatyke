@@ -1,8 +1,4 @@
 # Projekt-Semestralny-na-Informatyke
-Projekt Semestralny Gry na Informatyke
-
-
-
 Projekt semestralny gry na zajęcia Informatyki
 
 Gra polegać będzie na ruchu sprite'a, który unikać będzie musiał przeciwników nadchodzących z prawej strony ekranu. 
