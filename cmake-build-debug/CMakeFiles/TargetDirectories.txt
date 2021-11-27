@@ -1,0 +1,3 @@
+/Users/administrator/CLionProjects/Projekt-Semestralny-na-Informatyke/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/administrator/CLionProjects/Projekt-Semestralny-na-Informatyke/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/administrator/CLionProjects/Projekt-Semestralny-na-Informatyke/cmake-build-debug/CMakeFiles/Projekt_Semestralny_na_Informatyke.dir
