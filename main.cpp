@@ -3,6 +3,9 @@
 #include <SFML/Window.hpp>
 #include "klasy.hpp"
 
+
+//Dodac mozliwosc powrotu do gry przez menu
+//Dodac opcje zapisu do pliku przez menu
 int main() {
     sf::Event event;
     sf::RenderWindow window(sf::VideoMode(476, 476), "Projekt gry");

@@ -1,6 +1,9 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <random>
+
+
+//Uzytkownik
 class Player{
 private:
     float x;
@@ -89,7 +92,11 @@ void Player::moveD(float xt, float yt){
     gracz.move(pos);
 }
 
+//Koniec uzytkownika
 
+
+
+//Menu
 
 class Menu
 {
@@ -189,7 +196,7 @@ void myDelay(int opoznienie)
     }
 }
 
-
+//Koniec Menu
 
 class Enemy{
 public:
@@ -203,6 +210,7 @@ private:
     void moveEnemy();
 };
 
+//Przeciwnik
 Enemy::Enemy(int Nt){
     std::mt19937 gen(rd());
         std::uniform_int_distribution<> distX(1,750);
