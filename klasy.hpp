@@ -18,6 +18,8 @@ public:
     void moveA(float x, float y);
     void moveS(float x, float y);
     void moveD(float x, float y);
+    void _get(float*, float*);
+    void _set(float*, float*);
     Player(float x, float y);
     sf::Sprite getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
@@ -34,6 +36,17 @@ Player::Player(float xt, float yt){
     gracz.setPosition(position);
 }
 
+void Player::_get(float *x_get, float *y_get){
+    *x_get = this -> x;
+    *y_get = this -> y;
+}
+
+void Player::_set(float *xt, float *yt){
+
+    this -> x = *xt;
+    this -> y = *yt;
+
+}
 void Player::moveW(float xt, float yt){
     sf::Vector2f pos;
     pos.x = xt * vel.x;
