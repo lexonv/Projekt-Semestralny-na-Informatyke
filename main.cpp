@@ -8,18 +8,18 @@
 //Dodac opcje zapisu do pliku przez menu
 int main() {
     sf::Event event;
-    sf::RenderWindow window(sf::VideoMode(476, 476), "Projekt gry");
+    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Szkieletor Atakuje");
 
     sf::Texture background_texture;
-    sf::IntRect background(0,0,476,476);
-    background_texture.loadFromFile("textures/background.png");
+    sf::IntRect background(0,0,476.0,476.0);
+    background_texture.loadFromFile("textures/background.png"); //tło to placeholder
     sf::Sprite background1(background_texture, background);
 
     Menu menu(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
     int flaga = 0;
     Player p1(100, 100);
-
+    Enemy d1(2);
     sf::Clock zegar;
     while (window.isOpen())
     {

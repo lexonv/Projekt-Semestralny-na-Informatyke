@@ -126,7 +126,7 @@ public:
     void przesunG();//przesun do gory
     void przesunD();//przesun w dol
     int getSelectedItem() { return selectedItem; }//zwroc poziom menu
-    void draw(sf::RenderWindow &window);//rysuj menu w oknie
+    void draw(sf::RenderWindow &window);
 };
 
 Menu::Menu(float width, float height)
@@ -212,15 +212,16 @@ void myDelay(int opoznienie)
 //Koniec Menu
 
 class Enemy{
-public:
+private:
     sf::Texture enemy_texture;
     sf::Sprite *enemy;
     int N;
     std::random_device rd;
-private:
+public:
     Enemy(int);
     void updateEnemy();
     void moveEnemy();
+    sf::Sprite getEnemy(){ return *enemy; }
 };
 
 //Przeciwnik
@@ -229,7 +230,7 @@ Enemy::Enemy(int Nt){
         std::uniform_int_distribution<> distX(1,750);
         std::uniform_int_distribution<> distY(1,550);
         float x=0, y=0;
-        enemy_texture.loadFromFile("toad.png");
+        enemy_texture.loadFromFile("textures/profesor.png");
         N = Nt;
         enemy = new sf::Sprite[N];
         for (int i = 0; i < N; i++)
@@ -243,5 +244,9 @@ Enemy::Enemy(int Nt){
         }
 }
 
+class Interfejs{
+private:
+public:
 
+};
 
