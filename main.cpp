@@ -3,9 +3,6 @@
 #include <SFML/Window.hpp>
 #include "klasy.hpp"
 
-
-//Dodac mozliwosc powrotu do gry przez menu
-//Dodac opcje zapisu do pliku przez menu
 int main() {
     sf::Event event;
     sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Szkieletor Atakuje");
@@ -15,12 +12,12 @@ int main() {
     background_texture.loadFromFile("textures/background.png"); //tło to placeholder
     sf::Sprite background1(background_texture, background);
 
+    interfejsTekst* int1 = new interfejsTekst(sf::Vector2f(476.0, 476.0), &window);
+
     Menu menu(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
-    int flaga = 0;
+
     Player p1(100, 100);
-    Enemy d1(2);
-    sf::Clock zegar;
     while (window.isOpen())
     {
         while (window.pollEvent(event))
@@ -28,6 +25,7 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
 
+            //MENU
             if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::Up)
@@ -35,19 +33,19 @@ int main() {
                     myDelay(250);
                     menu.przesunG();
                 }
-
                 if (event.key.code == sf::Keyboard::Down)
                 {
                     myDelay(250);
                     menu.przesunD();
                 }
+                if (event.key.code == sf::Keyboard::Escape){
+                    menu_selected_flag = 0;
+                }
                 if (menu_selected_flag == 0)
                 {
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 0)
                     {
-                        std::cout << "Uruchamiam gre..." << std::endl;
                         menu_selected_flag = 1;
-                        flaga = 1;
                     }
 
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1)
@@ -67,10 +65,12 @@ int main() {
                         menu_selected_flag = 1;
                         window.close();
                     }
-
                 }
 
-                if(flaga == 1){
+
+                //STEROWANIE
+                if(menu_selected_flag == 1)
+                {
                     if (event.key.code == sf::Keyboard::W)
                     {
                         p1.moveW(0,-20.0f);
@@ -91,12 +91,14 @@ int main() {
             }
         }
         window.clear();
-        if(flaga==1){
+        if(menu_selected_flag==1){
             window.draw(background1);
             window.draw(p1.getPlayer());
         }
-        if(menu_selected_flag==0)
+        if(menu_selected_flag==0) {
+            window.clear();
             menu.draw(window);
+        }
         window.display();
     }
     return 0;

@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 
-
 //Uzytkownik
 class Player{
 private:
@@ -11,7 +10,7 @@ private:
     sf::Sprite gracz;
     sf::Texture tekstura;
     sf::Vector2f position;
-    sf::Vector2f vel = { 1.5f, 1.5f};
+    sf::Vector2f vel = { 1.3f, 1.3f};
     sf::IntRect ksztalt;
 public:
     void moveW(float x, float y);
@@ -23,7 +22,6 @@ public:
     Player(float x, float y);
     sf::Sprite getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
-    void render();
 };
 
 Player::Player(float xt, float yt){
@@ -57,6 +55,9 @@ void Player::moveW(float xt, float yt){
     else
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
+    if(getPos().y <= 0){
+        pos.y = 0;
+    }
     gracz.move(pos);
 }
 
@@ -80,12 +81,16 @@ void Player::moveS(float xt, float yt){
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
+
     ksztalt.top = 128;
     if(ksztalt.left == 512)
         ksztalt.left = 0;
     else
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
+    if(getPos().y >=400){
+        pos.y=0;
+    }
     gracz.move(pos);
 }
 
@@ -99,8 +104,8 @@ void Player::moveD(float xt, float yt){
     else
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
-    if(getPos().x>=476){
-        pos.x = 476;
+    if(getPos().x >=410){
+        pos.x=0;
     }
     gracz.move(pos);
 }
@@ -209,44 +214,115 @@ void myDelay(int opoznienie)
     }
 }
 
-//Koniec Menu
 
-class Enemy{
-private:
-    sf::Texture enemy_texture;
-    sf::Sprite *enemy;
-    int N;
-    std::random_device rd;
+
+//class Enemy{
+//private:
+//    sf::Texture enemy_texture;
+//    sf::Sprite *enemy;
+//    sf::IntRect ksztalt;
+//    int N;
+//    std::random_device rd;
+//public:
+//    Enemy(int);
+//    void updateEnemy();
+//    void moveEnemy();
+//    sf::Sprite getEnemy(){ return *enemy; }
+//};
+//
+
+//Enemy::Enemy(int Nt){
+//    std::mt19937 gen(rd());
+//        std::uniform_int_distribution<> distX(1,750);
+//        std::uniform_int_distribution<> distY(1,550);
+//        float x=0, y=0;
+//        enemy_texture.loadFromFile("textures/profesor.png");
+//        N = Nt;
+//        enemy = new sf::Sprite[N];
+//        for (int i = 0; i < N; i++)
+//        {
+//            x = distX(gen);
+//            y = distY(gen);
+//
+//            enemy[i].setTexture(enemy_texture);
+//            enemy[i].setPosition(sf::Vector2f(x, y));
+//            enemy[i].setScale(sf::Vector2f(0.03f, 0.03f));
+//        }
+//}
+
+
+//INTERFEJS GRY (PUNTY ZYCIE ITD.)
+class Interfejs{
+protected:
+    sf::Vector2f bounds;
+    sf::Vector2f innerBounds;
+    sf::Text* goraLewy;
+    sf::Font* czcionka;
+    void inicjuj();
 public:
-    Enemy(int);
-    void updateEnemy();
-    void moveEnemy();
-    sf::Sprite getEnemy(){ return *enemy; }
+    Interfejs(sf::Vector2f _bounds);
+    Interfejs();
+    void draw(sf::RenderWindow& _okno);
+    void update(std::string _goraLewy);
+
 };
 
-//Przeciwnik
-Enemy::Enemy(int Nt){
-    std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distX(1,750);
-        std::uniform_int_distribution<> distY(1,550);
-        float x=0, y=0;
-        enemy_texture.loadFromFile("textures/profesor.png");
-        N = Nt;
-        enemy = new sf::Sprite[N];
-        for (int i = 0; i < N; i++)
-        {
-            x = distX(gen);
-            y = distY(gen);
+void Interfejs::inicjuj() {
+    czcionka = new sf::Font;
+    if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
+        return;
 
-            enemy[i].setTexture(enemy_texture);
-            enemy[i].setPosition(sf::Vector2f(x, y));
-            enemy[i].setScale(sf::Vector2f(0.03f, 0.03f));
-        }
+    goraLewy = new sf::Text;
+
+    goraLewy->setFont(*czcionka);
+    goraLewy->setCharacterSize(18);
+    goraLewy->setPosition(10, 5);
+    goraLewy->setFillColor(sf::Color::Cyan);
+    goraLewy->setString("Left top");
 }
 
-class Interfejs{
-private:
-public:
+void Interfejs::update(std::string _goraLewy) {
+    goraLewy->setString(_goraLewy);
+}
+Interfejs::Interfejs(sf::Vector2f _bounds) :bounds(_bounds) {
+    this->inicjuj();
+}
 
+Interfejs::Interfejs() {
+    this->bounds.x = 800.0;
+    this->bounds.y = 600.0;
+    this->inicjuj();
+}
+
+void Interfejs::draw(sf::RenderWindow& okno) {
+    okno.draw(*goraLewy);
+}
+
+class interfejsTekst : public Interfejs {
+
+private:
+    sf::Text* glownyTekst;
+public:
+    interfejsTekst(sf::Vector2f _bounds, sf::RenderWindow* _okno);
+    void draw(sf::RenderWindow& okno);
 };
 
+interfejsTekst::interfejsTekst(sf::Vector2f _bounds, sf::RenderWindow* _okno) {
+    this->bounds = _bounds;
+    czcionka = new sf::Font;
+    if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
+        return;
+
+    glownyTekst = new sf::Text;
+
+    glownyTekst->setFont(*czcionka);
+    glownyTekst->setCharacterSize(28);
+    glownyTekst->setPosition(25, 60);
+    glownyTekst->setFillColor(sf::Color::Red);
+    glownyTekst->setString("Line1\nLine2\nLine3");
+}
+
+void interfejsTekst::draw(sf::RenderWindow& okno) {
+    Interfejs::draw(okno);
+    okno.draw(*glownyTekst);
+}
