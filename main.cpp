@@ -12,9 +12,8 @@ int main() {
     background_texture.loadFromFile("textures/background.png"); //tło to placeholder
     sf::Sprite background1(background_texture, background);
 
-    interfejsTekst* int1 = new interfejsTekst(sf::Vector2f(476.0, 476.0), &window);
-
     Menu menu(window.getSize().x, window.getSize().y);
+    Menu opcje(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
 
     Player p1(100, 100);
@@ -41,6 +40,11 @@ int main() {
                 if (event.key.code == sf::Keyboard::Escape){
                     menu_selected_flag = 0;
                 }
+
+                if(event.key.code == sf::Keyboard::F1 && menu_selected_flag == 1) {
+                   menu_selected_flag = 2;
+                }
+
                 if (menu_selected_flag == 0)
                 {
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 0)
@@ -50,16 +54,24 @@ int main() {
 
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1)
                     {
-                        std::cout << "Kontrola piłki przez WASD:" <<"\n"<<"W - "<<"Ruch w górę"<<"\n"<<"S - "<<"Ruch w dół"<<"\n"<<"A - "<<"Ruch w prawo"<<"\n"<<"D - "<<"Ruch w lewo"<<"\n"<< std::endl;
+                        std::cout << "Wczytaj..."<< std::endl;
 
                     }
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2)
                     {
-                        std::cout << "Zapisywanie..."<< std::endl;
+                        std::cout << "Pomoc..."<< std::endl;
+                        menu_selected_flag = 2;
 
                     }
+                    if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
+                        std::cout << "Zapisz..."<< std::endl;
+                    }
+                    if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 4) {
+                        std::cout << "Trudnosc..."<< std::endl;
+                        menu_selected_flag = 3;
+                    }
 
-                    if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3)
+                    if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5)
                     {
                         std::cout << "Koniec gry..." << std::endl;
                         menu_selected_flag = 1;
@@ -88,14 +100,47 @@ int main() {
                         p1.moveD(20.0f,0);
                     }
                 }
+
             }
         }
         window.clear();
+        if(menu_selected_flag == 3){
+            menu.poziomtrudnosci(window.getSize().x, window.getSize().y);
+            window.clear();
+            menu.draw(window);
+            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1) {
+                std::cout << "Wybrano Poziom Latwy"<< std::endl;
+                menu_selected_flag = 0;
+            }
+            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2) {
+                std::cout << "Wybrano Poziom Normalny"<< std::endl;
+                menu_selected_flag = 0;
+            }
+            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
+                std::cout << "Wybrano Poziom Trudny"<< std::endl;
+                menu_selected_flag = 0;
+            }
+
+        }
+
+        if(menu_selected_flag == 2){
+            menu.pomoc(window.getSize().x, window.getSize().y);
+            window.clear();
+            menu.draw(window);
+            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5)
+            {
+                menu_selected_flag = 0;
+            }
+
+        }
+
         if(menu_selected_flag==1){
             window.draw(background1);
             window.draw(p1.getPlayer());
         }
+
         if(menu_selected_flag==0) {
+            menu.menuglowne(window.getSize().x, window.getSize().y);
             window.clear();
             menu.draw(window);
         }
