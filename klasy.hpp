@@ -15,9 +15,8 @@ public:
     void moveA(float x, float y);
     void moveS(float x, float y);
     void moveD(float x, float y);
-    void pocisk();
-//    void _get(float*, float*);
-//    void _set(float*, float*);
+    void _get(float*, float*);
+    void _set(float*, float*);
     Player(float x, float y);
     sf::Sprite getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
@@ -32,20 +31,18 @@ Player::Player(float xt, float yt){
     gracz = sf::Sprite (tekstura, ksztalt);
     gracz.setPosition(position);
 }
-void Player::pocisk() {
+
+void Player::_get(float *x_get, float *y_get){
+    *x_get = this -> position.x;
+    *y_get = this -> position.y;
+}
+
+void Player::_set(float *xt, float *yt){
+
+    this -> position.x = *xt;
+    this -> position.y = *yt;
 
 }
-//void Player::_get(float *x_get, float *y_get){
-//    *x_get = this -> x;
-//    *y_get = this -> y;
-//}
-//
-//void Player::_set(float *xt, float *yt){
-//
-//    this -> x = *xt;
-//    this -> y = *yt;
-//
-//}
 void Player::moveW(float xt, float yt){
     sf::Vector2f pos;
     pos.x = xt * vel.x;
@@ -141,6 +138,9 @@ public:
 };
 void Menu::poziomtrudnosci(float width, float height) {
     max_poziom = 4;
+    if(selectedItem == 0){
+        menu[selectedItem]=menu[1];
+    }
     if(selectedItem>3){
         selectedItem = 0;
     }
@@ -166,7 +166,7 @@ void Menu::menuglowne(float width, float height) {
     max_poziom = 6;
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Nowa gra");
+    menu[0].setString("Graj");
     menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
@@ -174,7 +174,7 @@ void Menu::menuglowne(float width, float height) {
     menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Pomoc");
+    menu[2].setString("Sterowanie");
     menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
@@ -185,7 +185,7 @@ void Menu::menuglowne(float width, float height) {
     menu[4].setString("Trudnosc");
     menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
     menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::White);
+    menu[5].setFillColor(sf::Color::Red);
     menu[5].setString("Wyjscie");
     menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
@@ -211,7 +211,7 @@ void Menu::pomoc(float width, float height){
     menu[4].setString("Spacja - strzal");
     menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
     menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::White);
+    menu[5].setFillColor(sf::Color::Red);
     menu[5].setString("Wyjscie");
     menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
@@ -242,7 +242,7 @@ Menu::Menu(float width, float height){
     menu[4].setString("Opcje");
     menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
     menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::White);
+    menu[5].setFillColor(sf::Color::Red);
     menu[5].setString("Wyjscie");
     menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
@@ -264,7 +264,7 @@ void Menu::przesunG()
         selectedItem--;
         if (selectedItem < 0)
             selectedItem = max_poziom - 1;
-        menu[selectedItem].setFillColor(sf::Color::White);
+        menu[selectedItem].setFillColor(sf::Color::Red);
         menu[selectedItem].setStyle(sf::Text::Bold);
     }
 
@@ -280,9 +280,10 @@ void Menu::przesunD()
         selectedItem++;
         if (selectedItem >= max_poziom)
             selectedItem = 0;
-        menu[selectedItem].setFillColor(sf::Color::White);
+        menu[selectedItem].setFillColor(sf::Color::Red);
         menu[selectedItem].setStyle(sf::Text::Bold);
     }
+
 
 }
 
@@ -414,3 +415,46 @@ void myDelay(int opoznienie)
 //    Interfejs::draw(okno);
 //    okno.draw(*glownyTekst);
 //}
+
+
+
+//Struktura do zapisu do pliku
+typedef struct{
+    int zycie;
+    int scores;
+    float x_polozenie;
+    float y_polozenie;
+    bool aktywny;
+}Gracz;
+
+void zapiszDane(FILE *file, Gracz p)
+{
+    //Czy udało się otworzyć/utworzyć plik?
+    if(file == NULL)
+    {
+        perror("ER00R");
+    }
+
+    else{
+        std::cout<<"Plik zaladowany"<<"\n"<<std::endl;
+    }
+    fwrite(&p, sizeof(p), 1, file);
+    fclose(file);
+}
+void wczytajDane(FILE *file, Gracz p){
+    Gracz danebuf;
+    file = fopen("dane.dat", "rb");
+    std::cout<<"===== Dane: ====="<<std::endl;
+    fseek(file, 0, SEEK_SET);
+    fread(&danebuf, sizeof(danebuf), 1, file);
+    std::cout<<"Zycie -> "<<danebuf.zycie<<std::endl;
+    std::cout<<"=================="<<std::endl;
+    std::cout<<"Scores -> "<<danebuf.scores<<std::endl;
+    fclose(file);
+}
+Gracz generuj(){
+    Gracz dane;
+    dane.zycie = 4;
+    dane.scores = 0;
+    return dane;
+}

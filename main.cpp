@@ -11,11 +11,13 @@ int main() {
     sf::IntRect background(0,0,476.0,476.0);
     background_texture.loadFromFile("textures/background.png"); //tło to placeholder
     sf::Sprite background1(background_texture, background);
+    Gracz dane;
+    dane = generuj();
 
     Menu menu(window.getSize().x, window.getSize().y);
     Menu opcje(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
-
+    bool gra_w_toku = false;
     Player p1(100, 100);
     while (window.isOpen())
     {
@@ -27,6 +29,7 @@ int main() {
             //MENU
             if (event.type == sf::Event::KeyPressed)
             {
+
                 if (event.key.code == sf::Keyboard::Up)
                 {
                     myDelay(250);
@@ -37,18 +40,25 @@ int main() {
                     myDelay(250);
                     menu.przesunD();
                 }
-                if (event.key.code == sf::Keyboard::Escape){
+                if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1){
                     menu_selected_flag = 0;
                 }
+
+                if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1 && gra_w_toku == true){
+                    menu_selected_flag = 0;
+                }
+
 
                 if(event.key.code == sf::Keyboard::F1 && menu_selected_flag == 1) {
                    menu_selected_flag = 2;
                 }
 
+
                 if (menu_selected_flag == 0)
                 {
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 0)
                     {
+                        gra_w_toku = true;
                         menu_selected_flag = 1;
                     }
 
@@ -64,7 +74,7 @@ int main() {
 
                     }
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
-                        std::cout << "Zapisz..."<< std::endl;
+                        menu_selected_flag = 4;
                     }
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 4) {
                         std::cout << "Trudnosc..."<< std::endl;
@@ -103,7 +113,18 @@ int main() {
 
             }
         }
+        //zapisz do pliku
         window.clear();
+        if(menu_selected_flag == 4){
+            std::cout << "Zapisz..."<< std::endl;
+            FILE* plik;
+            plik = fopen("dane.dat", "wb");
+            zapiszDane(plik, dane);
+            wczytajDane(plik, dane);
+            menu_selected_flag = 0;
+        }
+
+        //wybor poziomu
         if(menu_selected_flag == 3){
             menu.poziomtrudnosci(window.getSize().x, window.getSize().y);
             window.clear();
@@ -112,6 +133,7 @@ int main() {
                 std::cout << "Wybrano Poziom Latwy"<< std::endl;
                 menu_selected_flag = 0;
             }
+
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2) {
                 std::cout << "Wybrano Poziom Normalny"<< std::endl;
                 menu_selected_flag = 0;
@@ -120,9 +142,8 @@ int main() {
                 std::cout << "Wybrano Poziom Trudny"<< std::endl;
                 menu_selected_flag = 0;
             }
-
         }
-
+        //pokaz sterowanie
         if(menu_selected_flag == 2){
             menu.pomoc(window.getSize().x, window.getSize().y);
             window.clear();
@@ -133,12 +154,12 @@ int main() {
             }
 
         }
-
+        //rozpocznij gre
         if(menu_selected_flag==1){
             window.draw(background1);
             window.draw(p1.getPlayer());
         }
-
+        //pokaz menu glowne
         if(menu_selected_flag==0) {
             menu.menuglowne(window.getSize().x, window.getSize().y);
             window.clear();
