@@ -6,6 +6,7 @@
 int main() {
     sf::Event event;
     sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Szkieletor Atakuje");
+    Interfejs* oknoGlowne = new Interfejs(sf::Vector2f(476.0, 476.0)); // zad 1
 
     sf::Texture background_texture;
     sf::IntRect background(0,0,476.0,476.0);
@@ -13,12 +14,12 @@ int main() {
     sf::Sprite background1(background_texture, background);
     Gracz dane;
     dane = generuj();
-
+    FILE* plik;
     Menu menu(window.getSize().x, window.getSize().y);
-    Menu opcje(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
     bool gra_w_toku = false;
-    Player p1(100, 100);
+
+    Player p1(50, 200);
     while (window.isOpen())
     {
         while (window.pollEvent(event))
@@ -29,6 +30,20 @@ int main() {
             //MENU
             if (event.type == sf::Event::KeyPressed)
             {
+                //DEBUG INTERFEJS
+                if(event.key.code == sf::Keyboard::C){
+                    dane.zycie = dane.zycie - 1;
+                    std::cout<<"dane.zycie = "<<dane.zycie<<std::endl;
+                }
+                if(event.key.code == sf::Keyboard::V){
+                    dane.scores = dane.scores + 10;
+                    std::cout<<"dane.scores = "<<dane.scores<<std::endl;
+                }
+                if(event.key.code == sf::Keyboard::P){
+                    std::cout<<"!Aktualne dane!"<<std::endl;
+                    std::cout<<"dane.zycie = "<<dane.zycie<<std::endl;
+                    std::cout<<"dane.scores = "<<dane.scores<<std::endl;
+                }
 
                 if (event.key.code == sf::Keyboard::Up)
                 {
@@ -40,11 +55,9 @@ int main() {
                     myDelay(250);
                     menu.przesunD();
                 }
-                if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1){
-                    menu_selected_flag = 0;
-                }
 
-                if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1 && gra_w_toku == true){
+
+                if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1){
                     menu_selected_flag = 0;
                 }
 
@@ -64,8 +77,9 @@ int main() {
 
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1)
                     {
-                        std::cout << "Wczytaj..."<< std::endl;
-
+                        std::cout << "Wczytaj zapis..."<< std::endl;
+                        wczytajDane(plik, dane);
+                        menu_selected_flag = 1;
                     }
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2)
                     {
@@ -84,7 +98,6 @@ int main() {
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5)
                     {
                         std::cout << "Koniec gry..." << std::endl;
-                        menu_selected_flag = 1;
                         window.close();
                     }
                 }
@@ -113,14 +126,12 @@ int main() {
 
             }
         }
-        //zapisz do pliku
         window.clear();
+        //zapisz do pliku
         if(menu_selected_flag == 4){
             std::cout << "Zapisz..."<< std::endl;
-            FILE* plik;
-            plik = fopen("dane.dat", "wb");
+            plik = fopen("dane.dat", "w+b");
             zapiszDane(plik, dane);
-            wczytajDane(plik, dane);
             menu_selected_flag = 0;
         }
 
@@ -148,17 +159,26 @@ int main() {
             menu.pomoc(window.getSize().x, window.getSize().y);
             window.clear();
             menu.draw(window);
-            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5)
+            if ((event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5 && gra_w_toku == true)
+            || (event.key.code == sf::Keyboard::Escape && gra_w_toku == true))
+            {
+                menu_selected_flag = 1;
+            }
+
+            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5 && gra_w_toku == false)
             {
                 menu_selected_flag = 0;
             }
-
         }
+
         //rozpocznij gre
         if(menu_selected_flag==1){
             window.draw(background1);
+            oknoGlowne->draw(window);
+            oknoGlowne->update("Punkty zycia: " + std::to_string(dane.zycie) + "\n" + "Scores: " + std::to_string(dane.scores));
             window.draw(p1.getPlayer());
         }
+
         //pokaz menu glowne
         if(menu_selected_flag==0) {
             menu.menuglowne(window.getSize().x, window.getSize().y);

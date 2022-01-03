@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 
-//Uzytkownik
+//UZYTKOWNIK
 class Player{
 private:
     sf::Sprite gracz;
@@ -25,7 +25,6 @@ public:
 Player::Player(float xt, float yt){
     position.x = xt;
     position.y = yt;
-    
     tekstura.loadFromFile("textures/profesor.png");
     ksztalt = sf::IntRect({0, 0, 64, 64});
     gracz = sf::Sprite (tekstura, ksztalt);
@@ -110,12 +109,9 @@ void Player::moveD(float xt, float yt){
     gracz.move(pos);
 }
 
-//Koniec uzytkownika
 
 
-
-//Menu
-
+//MENU
 class Menu
 {
 
@@ -166,7 +162,7 @@ void Menu::menuglowne(float width, float height) {
     max_poziom = 6;
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Graj");
+    menu[0].setString("Nowa Gra");
     menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
@@ -260,6 +256,7 @@ void Menu::przesunG()
 {
     if (selectedItem >= 0 && selectedItem < max_poziom)
     {
+        menu[selectedItem].setFillColor(sf::Color::White);
         menu[selectedItem].setStyle(sf::Text::Regular);
         selectedItem--;
         if (selectedItem < 0)
@@ -275,7 +272,7 @@ void Menu::przesunD()
 {
     if (selectedItem >= 0 && selectedItem < max_poziom)
     {
-        menu[selectedItem].setFillColor(sf::Color::Red);
+        menu[selectedItem].setFillColor(sf::Color::White);
         menu[selectedItem].setStyle(sf::Text::Regular);
         selectedItem++;
         if (selectedItem >= max_poziom)
@@ -283,8 +280,6 @@ void Menu::przesunD()
         menu[selectedItem].setFillColor(sf::Color::Red);
         menu[selectedItem].setStyle(sf::Text::Bold);
     }
-
-
 }
 
 void myDelay(int opoznienie)
@@ -303,153 +298,35 @@ void myDelay(int opoznienie)
     }
 }
 
-
-
-//class Enemy{
-//private:
-//    sf::Texture enemy_texture;
-//    sf::Sprite *enemy;
-//    sf::IntRect ksztalt;
-//    int N;
-//    std::random_device rd;
-//public:
-//    Enemy(int);
-//    void updateEnemy();
-//    void moveEnemy();
-//    sf::Sprite getEnemy(){ return *enemy; }
-//};
-//
-
-//Enemy::Enemy(int Nt){
-//    std::mt19937 gen(rd());
-//        std::uniform_int_distribution<> distX(1,750);
-//        std::uniform_int_distribution<> distY(1,550);
-//        float x=0, y=0;
-//        enemy_texture.loadFromFile("textures/profesor.png");
-//        N = Nt;
-//        enemy = new sf::Sprite[N];
-//        for (int i = 0; i < N; i++)
-//        {
-//            x = distX(gen);
-//            y = distY(gen);
-//
-//            enemy[i].setTexture(enemy_texture);
-//            enemy[i].setPosition(sf::Vector2f(x, y));
-//            enemy[i].setScale(sf::Vector2f(0.03f, 0.03f));
-//        }
-//}
-
-
-//INTERFEJS GRY (PUNTY ZYCIE ITD.)
-//class Interfejs{
-//protected:
-//    sf::Vector2f bounds;
-//    sf::Vector2f innerBounds;
-//    sf::Text* goraLewy;
-//    sf::Font* czcionka;
-//    void inicjuj();
-//public:
-//    Interfejs(sf::Vector2f _bounds);
-//    Interfejs();
-//    void draw(sf::RenderWindow& _okno);
-//    void update(std::string _goraLewy);
-//
-//};
-//
-//void Interfejs::inicjuj() {
-//    czcionka = new sf::Font;
-//    if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
-//        return;
-//
-//    goraLewy = new sf::Text;
-//
-//    goraLewy->setFont(*czcionka);
-//    goraLewy->setCharacterSize(18);
-//    goraLewy->setPosition(10, 5);
-//    goraLewy->setFillColor(sf::Color::Cyan);
-//    goraLewy->setString("Left top");
-//}
-//
-//void Interfejs::update(std::string _goraLewy) {
-//    goraLewy->setString(_goraLewy);
-//}
-//Interfejs::Interfejs(sf::Vector2f _bounds) :bounds(_bounds) {
-//    this->inicjuj();
-//}
-//
-//Interfejs::Interfejs() {
-//    this->bounds.x = 800.0;
-//    this->bounds.y = 600.0;
-//    this->inicjuj();
-//}
-//
-//void Interfejs::draw(sf::RenderWindow& okno) {
-//    okno.draw(*goraLewy);
-//}
-//
-//class interfejsTekst : public Interfejs {
-//
-//private:
-//    sf::Text* glownyTekst;
-//public:
-//    interfejsTekst(sf::Vector2f _bounds, sf::RenderWindow* _okno);
-//    void draw(sf::RenderWindow& okno);
-//};
-//
-//interfejsTekst::interfejsTekst(sf::Vector2f _bounds, sf::RenderWindow* _okno) {
-//    this->bounds = _bounds;
-//    czcionka = new sf::Font;
-//    if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
-//        return;
-//
-//    glownyTekst = new sf::Text;
-//
-//    glownyTekst->setFont(*czcionka);
-//    glownyTekst->setCharacterSize(28);
-//    glownyTekst->setPosition(25, 60);
-//    glownyTekst->setFillColor(sf::Color::Red);
-//    glownyTekst->setString("Line1\nLine2\nLine3");
-//}
-//
-//void interfejsTekst::draw(sf::RenderWindow& okno) {
-//    Interfejs::draw(okno);
-//    okno.draw(*glownyTekst);
-//}
-
-
-
-//Struktura do zapisu do pliku
+//ZAPIS DO PLIKU
 typedef struct{
     int zycie;
     int scores;
-    float x_polozenie;
-    float y_polozenie;
-    bool aktywny;
 }Gracz;
 
 void zapiszDane(FILE *file, Gracz p)
 {
-    //Czy udało się otworzyć/utworzyć plik?
+    file = fopen("dane.dat", "w+b");
     if(file == NULL)
     {
         perror("ER00R");
     }
-
-    else{
+    else
+    {
         std::cout<<"Plik zaladowany"<<"\n"<<std::endl;
     }
-    fwrite(&p, sizeof(p), 1, file);
+    fwrite(&p, sizeof(p), 2, file);
     fclose(file);
+
 }
 void wczytajDane(FILE *file, Gracz p){
-    Gracz danebuf;
     file = fopen("dane.dat", "rb");
-    std::cout<<"===== Dane: ====="<<std::endl;
     fseek(file, 0, SEEK_SET);
-    fread(&danebuf, sizeof(danebuf), 1, file);
-    std::cout<<"Zycie -> "<<danebuf.zycie<<std::endl;
+    fread(&p, sizeof(p), 1, file);
+    std::cout<<"===== Dane: ====="<<std::endl;
+    std::cout<<"Życie -> "<<p.zycie<<std::endl;
     std::cout<<"=================="<<std::endl;
-    std::cout<<"Scores -> "<<danebuf.scores<<std::endl;
+    std::cout<<"Scores -> "<<p.scores<<std::endl;
     fclose(file);
 }
 Gracz generuj(){
@@ -458,3 +335,53 @@ Gracz generuj(){
     dane.scores = 0;
     return dane;
 }
+
+
+//INTERFEJS GRY (PUNTY ZYCIE ITD.)
+class Interfejs{
+protected:
+    sf::Vector2f bounds;
+    sf::Text* goraLewy;
+    sf::Font* czcionka;
+    void inicjuj();
+public:
+    Interfejs(sf::Vector2f _bounds);
+    Interfejs();
+    void draw(sf::RenderWindow& _okno);
+    void update(std::string _goraLewy);
+};
+
+void Interfejs::inicjuj() {
+    Gracz dane;
+    czcionka = new sf::Font;
+    if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
+        return;
+
+    goraLewy = new sf::Text;
+
+    goraLewy->setFont(*czcionka);
+    goraLewy->setCharacterSize(18);
+    goraLewy->setPosition(10, 5);
+    goraLewy->setFillColor(sf::Color::White);
+    goraLewy->setStyle(sf::Text::Bold);
+    goraLewy->setString("DEBUG");
+}
+
+void Interfejs::update(std::string _goraLewy) {
+    goraLewy->setString(_goraLewy);
+}
+Interfejs::Interfejs(sf::Vector2f _bounds) :bounds(_bounds) {
+    this->inicjuj();
+}
+
+Interfejs::Interfejs() {
+    this->bounds.x = 460.0;
+    this->bounds.y = 460.0;
+    this->inicjuj();
+}
+
+void Interfejs::draw(sf::RenderWindow& okno) {
+    okno.draw(*goraLewy);
+}
+
+
