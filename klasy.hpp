@@ -162,7 +162,7 @@ void Menu::menuglowne(float width, float height) {
     max_poziom = 6;
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Nowa Gra");
+    menu[0].setString("Graj");
     menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
@@ -219,7 +219,7 @@ Menu::Menu(float width, float height){
     }
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Nowa gra");
+    menu[0].setString("Graj");
     menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
@@ -300,8 +300,8 @@ void myDelay(int opoznienie)
 
 //ZAPIS DO PLIKU
 typedef struct{
-    int zycie;
-    int scores;
+    int zycie = 4;
+    int scores = 0;
 }Gracz;
 
 void zapiszDane(FILE *file, Gracz p)
@@ -319,19 +319,27 @@ void zapiszDane(FILE *file, Gracz p)
     fclose(file);
 
 }
-void wczytajDane(FILE *file, Gracz p){
+Gracz wczytajDane(FILE *file, Gracz dane){
     file = fopen("dane.dat", "rb");
     fseek(file, 0, SEEK_SET);
-    fread(&p, sizeof(p), 1, file);
+    fread(&dane, sizeof(dane), 1, file);
     std::cout<<"===== Dane: ====="<<std::endl;
-    std::cout<<"Życie -> "<<p.zycie<<std::endl;
+    std::cout<<"Życie -> "<<dane.zycie<<std::endl;
     std::cout<<"=================="<<std::endl;
-    std::cout<<"Scores -> "<<p.scores<<std::endl;
+    std::cout<<"Scores -> "<<dane.scores<<std::endl;
     fclose(file);
+    return dane;
 }
 Gracz generuj(){
     Gracz dane;
     dane.zycie = 4;
+    dane.scores = 0;
+    return dane;
+}
+
+Gracz poziom(int hp){
+    Gracz dane;
+    dane.zycie = hp;
     dane.scores = 0;
     return dane;
 }
@@ -367,7 +375,7 @@ void Interfejs::inicjuj() {
     goraLewy->setString("DEBUG");
 }
 
-void Interfejs::update(std::string _goraLewy) {
+void Interfejs::update(const std::string _goraLewy) {
     goraLewy->setString(_goraLewy);
 }
 Interfejs::Interfejs(sf::Vector2f _bounds) :bounds(_bounds) {
@@ -383,5 +391,6 @@ Interfejs::Interfejs() {
 void Interfejs::draw(sf::RenderWindow& okno) {
     okno.draw(*goraLewy);
 }
+
 
 

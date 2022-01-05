@@ -78,7 +78,7 @@ int main() {
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1)
                     {
                         std::cout << "Wczytaj zapis..."<< std::endl;
-                        wczytajDane(plik, dane);
+                        dane = wczytajDane(plik, dane);
                         menu_selected_flag = 1;
                     }
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2)
@@ -142,15 +142,18 @@ int main() {
             menu.draw(window);
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1) {
                 std::cout << "Wybrano Poziom Latwy"<< std::endl;
+                dane = poziom(4);
                 menu_selected_flag = 0;
             }
 
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2) {
                 std::cout << "Wybrano Poziom Normalny"<< std::endl;
+                dane = poziom(2);
                 menu_selected_flag = 0;
             }
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
                 std::cout << "Wybrano Poziom Trudny"<< std::endl;
+                dane = poziom(1);
                 menu_selected_flag = 0;
             }
         }
