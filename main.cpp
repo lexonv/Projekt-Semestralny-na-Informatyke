@@ -18,16 +18,48 @@ int main() {
     Menu menu(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
     bool gra_w_toku = false;
+    sf::Clock zegar;
+    Player p1(50.0, 200.0);
 
-    Player p1(50, 200);
+    Enemy* przeciwnik1 = new Enemy();
+    Enemy* przeciwnik2 = new Enemy();
+    Enemy* przeciwnik3 = new Enemy();
+    Enemy* przeciwnik4 = new Enemy();
+    Enemy* przeciwnik5 = new Enemy();
+
     while (window.isOpen())
     {
+        //OBSLUGA PRZECIWNIKOW/KOLIZJI
+        if(menu_selected_flag==1){
+            przeciwnik1 -> move(-2,0);
+            przeciwnik2 -> move(-2,0);
+            przeciwnik3 -> move(-2,0);
+            przeciwnik4 -> move(-2,0);
+            przeciwnik5 -> move(-2,0);
+
+            if((kolizja(p1, przeciwnik1) == true)||
+            (kolizja(p1, przeciwnik2) == true)||
+            (kolizja(p1, przeciwnik3) == true)||
+            (kolizja(p1, przeciwnik4) == true)||
+            (kolizja(p1, przeciwnik5) == true))
+            {
+                if(zegar.getElapsedTime().asSeconds() > 0.4f)
+                {
+                    dane.zycie = dane.zycie - 1;
+                    zegar.restart();
+                }
+            }
+        }
+        //WARUNEK KONCA GRY - dodac #napis
+        if(dane.zycie == 0){
+            myDelay(1000);
+            window.close();
+        }
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            //MENU
             if (event.type == sf::Event::KeyPressed)
             {
                 //DEBUG INTERFEJS
@@ -45,6 +77,7 @@ int main() {
                     std::cout<<"dane.scores = "<<dane.scores<<std::endl;
                 }
 
+                //STEROWANIE MENU
                 if (event.key.code == sf::Keyboard::Up)
                 {
                     myDelay(250);
@@ -56,7 +89,7 @@ int main() {
                     menu.przesunD();
                 }
 
-
+                //POWROT DO MENU
                 if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1){
                     menu_selected_flag = 0;
                 }
@@ -66,7 +99,7 @@ int main() {
                    menu_selected_flag = 2;
                 }
 
-
+                //MENU GŁOWNE -WYBOR
                 if (menu_selected_flag == 0)
                 {
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 0)
@@ -112,7 +145,7 @@ int main() {
                     }
                     if (event.key.code == sf::Keyboard::A)
                     {
-                        p1.moveA(-20.0f,0);
+                        p1.moveA(-15.0f,0);
                     }
                     if (event.key.code == sf::Keyboard::S)
                     {
@@ -120,7 +153,7 @@ int main() {
                     }
                     if (event.key.code == sf::Keyboard::D)
                     {
-                        p1.moveD(20.0f,0);
+                        p1.moveD(15.0f,0);
                     }
                 }
 
@@ -174,12 +207,17 @@ int main() {
             }
         }
 
-        //rozpocznij gre
+        //START GRY
         if(menu_selected_flag==1){
-            window.draw(background1);
+            //window.draw(background1);
             oknoGlowne->draw(window);
             oknoGlowne->update("Punkty zycia: " + std::to_string(dane.zycie) + "\n" + "Scores: " + std::to_string(dane.scores));
+            window.draw(przeciwnik1->getEnemy());
             window.draw(p1.getPlayer());
+            window.draw(przeciwnik2->getEnemy());
+            window.draw(przeciwnik3->getEnemy());
+            window.draw(przeciwnik4->getEnemy());
+            window.draw(przeciwnik5->getEnemy());
         }
 
         //pokaz menu glowne
@@ -189,6 +227,7 @@ int main() {
             menu.draw(window);
         }
         window.display();
+
     }
     return 0;
 }

@@ -15,8 +15,6 @@ public:
     void moveA(float x, float y);
     void moveS(float x, float y);
     void moveD(float x, float y);
-    void _get(float*, float*);
-    void _set(float*, float*);
     Player(float x, float y);
     sf::Sprite getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
@@ -31,17 +29,6 @@ Player::Player(float xt, float yt){
     gracz.setPosition(position);
 }
 
-void Player::_get(float *x_get, float *y_get){
-    *x_get = this -> position.x;
-    *y_get = this -> position.y;
-}
-
-void Player::_set(float *xt, float *yt){
-
-    this -> position.x = *xt;
-    this -> position.y = *yt;
-
-}
 void Player::moveW(float xt, float yt){
     sf::Vector2f pos;
     pos.x = xt * vel.x;
@@ -298,9 +285,11 @@ void myDelay(int opoznienie)
     }
 }
 
-//ZAPIS DO PLIKU
+
+
+//ZAPIS DO PLIKU i STRUKTURA DANYCH
 typedef struct{
-    int zycie = 4;
+    int zycie;
     int scores = 0;
 }Gracz;
 
@@ -345,6 +334,7 @@ Gracz poziom(int hp){
 }
 
 
+
 //INTERFEJS GRY (PUNTY ZYCIE ITD.)
 class Interfejs{
 protected:
@@ -360,7 +350,6 @@ public:
 };
 
 void Interfejs::inicjuj() {
-    Gracz dane;
     czcionka = new sf::Font;
     if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
         return;
@@ -390,6 +379,79 @@ Interfejs::Interfejs() {
 
 void Interfejs::draw(sf::RenderWindow& okno) {
     okno.draw(*goraLewy);
+}
+
+
+
+//PRZECIWNICY
+class Enemy{
+private:
+    sf::Sprite enemy;
+    sf::IntRect ksztalt_enemy;
+    sf::Texture texture_enemy;
+    sf::Vector2f position_enemy;
+    sf::Vector2f vel = { 0.1f, 0.1f};
+    std::random_device rd;
+public:
+    Enemy();
+    void move(int, int);
+    sf::Sprite getEnemy(){ return enemy; }
+    sf::Vector2f getPos() { return enemy.getPosition();}
+};
+
+Enemy::Enemy(){
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(300,430);
+    std::uniform_int_distribution<> distY(50,380);
+    position_enemy.x = distX(gen);
+    position_enemy.y = distY(gen);
+    texture_enemy.loadFromFile("textures/szkieletor.png");
+    ksztalt_enemy = sf::IntRect({0, 0, 60, 60});
+    enemy = sf::Sprite (texture_enemy, ksztalt_enemy);
+    enemy.setPosition(position_enemy);
+}
+
+void Enemy::move(int dx, int dy){
+
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distY(50,300);
+
+    sf::Vector2f pos;
+    pos.x = dx * vel.x;
+    pos.y = dy * vel.y;
+    ksztalt_enemy.top = 60;
+    if(ksztalt_enemy.left == 512)
+        ksztalt_enemy.left = 0;
+    else
+        ksztalt_enemy.left += 64;
+    enemy.setTextureRect(ksztalt_enemy);
+
+    if(getPos().x<=-30)
+    {
+        pos.x = 500;
+//        pos.y = distY(gen);
+    }
+    enemy.move(pos);
+}
+
+
+bool kolizja(Player gracz, Enemy *przeciwnik)
+{
+    Gracz dane;
+    if(sqrt((gracz.getPos().x - przeciwnik->getPos().x)*(gracz.getPos().x - przeciwnik->getPos().x)+
+            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<25)
+    {
+        //Do sprawdzania bledow
+        std::cout<<std::endl;
+        std::cout<<"========================================"<<std::endl;
+        std::cout<<"gracz.x = "<<gracz.getPos().x<<std::endl;
+        std::cout<<"gracz.y = "<<gracz.getPos().y<<std::endl;
+        std::cout<<"przeciwnik.x = "<<przeciwnik->getPos().x<<std::endl;
+        std::cout<<"przeciwnik.y = "<<przeciwnik->getPos().y<<std::endl;
+        std::cout<<"========================================"<<std::endl;
+        return true;
+    }
+    return false;
 }
 
 
