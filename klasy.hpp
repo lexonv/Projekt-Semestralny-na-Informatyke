@@ -8,7 +8,7 @@ private:
     sf::Sprite gracz;
     sf::Texture tekstura;
     sf::Vector2f position;
-    sf::Vector2f vel = { 1.3f, 1.3f};
+    sf::Vector2f vel = { 1.1f, 1.1f};
     sf::IntRect ksztalt;
 public:
     void moveW(float x, float y);
@@ -202,32 +202,9 @@ Menu::Menu(float width, float height){
     max_poziom = 6;
     if (!font.loadFromFile("fonts/vikingfont.ttf"))
     {
+        std::cout<<"ER00R"<<std::endl;
         return;
     }
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Graj");
-    menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Wczytaj");
-    menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
-    menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Pomoc");
-    menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
-    menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("Zapisz");
-    menu[3].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 4));
-    menu[4].setFont(font);
-    menu[4].setFillColor(sf::Color::White);
-    menu[4].setString("Opcje");
-    menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
-    menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::Red);
-    menu[5].setString("Wyjscie");
-    menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
 
 void Menu::draw(sf::RenderWindow &window)
@@ -290,7 +267,7 @@ void myDelay(int opoznienie)
 //ZAPIS DO PLIKU i STRUKTURA DANYCH
 typedef struct{
     int zycie;
-    int scores = 0;
+    int scores;
 }Gracz;
 
 void zapiszDane(FILE *file, Gracz p)
@@ -390,7 +367,7 @@ private:
     sf::IntRect ksztalt_enemy;
     sf::Texture texture_enemy;
     sf::Vector2f position_enemy;
-    sf::Vector2f vel = { 0.1f, 0.1f};
+    sf::Vector2f vel = { 0.2f, 0.2f};
     std::random_device rd;
 public:
     Enemy();
@@ -401,8 +378,8 @@ public:
 
 Enemy::Enemy(){
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(300,430);
-    std::uniform_int_distribution<> distY(50,380);
+    std::uniform_int_distribution<> distX(300,480);
+    std::uniform_int_distribution<> distY(50,450);
     position_enemy.x = distX(gen);
     position_enemy.y = distY(gen);
     texture_enemy.loadFromFile("textures/szkieletor.png");
@@ -414,11 +391,11 @@ Enemy::Enemy(){
 void Enemy::move(int dx, int dy){
 
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distY(50,300);
+    std::uniform_int_distribution<> distY(100,200);
 
     sf::Vector2f pos;
     pos.x = dx * vel.x;
-    pos.y = dy * vel.y;
+
     ksztalt_enemy.top = 60;
     if(ksztalt_enemy.left == 512)
         ksztalt_enemy.left = 0;
@@ -439,7 +416,7 @@ bool kolizja(Player gracz, Enemy *przeciwnik)
 {
     Gracz dane;
     if(sqrt((gracz.getPos().x - przeciwnik->getPos().x)*(gracz.getPos().x - przeciwnik->getPos().x)+
-            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<25)
+            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<20)
     {
         //Do sprawdzania bledow
         std::cout<<std::endl;
@@ -453,6 +430,46 @@ bool kolizja(Player gracz, Enemy *przeciwnik)
     }
     return false;
 }
+
+
+
+//LOGIKA DZIALANIA POCISKU
+class Pocisk{
+private:
+    sf::Sprite *pocisk;
+    sf::IntRect ksztalt_pocisk;
+    sf::Texture texture_pocisk;
+    sf::Vector2f position_pocisk;
+    sf::Vector2f vel = { 0.5f, 0.5f};
+public:
+    Pocisk();
+    ~Pocisk(){delete pocisk;};
+    void strzal(Player);
+    void przesun(int, Player);
+    sf::Sprite getPocisk(){ return *pocisk; }
+};
+Pocisk::Pocisk() {
+    texture_pocisk.loadFromFile("textures/pocisk.png");
+    ksztalt_pocisk = sf::IntRect({0, 0, 100, 97});
+    pocisk = new sf::Sprite (texture_pocisk, ksztalt_pocisk);
+}
+
+void Pocisk::przesun(int dx, Player gracz){
+    sf::Vector2f pos;
+    pos.x = gracz.getPos().x + dx * vel.x;
+    pos.y = gracz.getPos().y;
+    ksztalt_pocisk.top = 0;
+    if(ksztalt_pocisk.left == 387)
+        ksztalt_pocisk.left = 0;
+    else
+        ksztalt_pocisk.left += 0;
+    pocisk->setTextureRect(ksztalt_pocisk);
+}
+
+void Pocisk::strzal(Player gracz) {
+
+}
+
 
 
 

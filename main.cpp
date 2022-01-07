@@ -6,19 +6,21 @@
 int main() {
     sf::Event event;
     sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Szkieletor Atakuje");
-    Interfejs* oknoGlowne = new Interfejs(sf::Vector2f(476.0, 476.0)); // zad 1
-
-    sf::Texture background_texture;
-    sf::IntRect background(0,0,476.0,476.0);
-    background_texture.loadFromFile("textures/background.png"); //tło to placeholder
-    sf::Sprite background1(background_texture, background);
-    Gracz dane;
-    dane = generuj();
-    FILE* plik;
+    Interfejs* interfejs = new Interfejs(sf::Vector2f(476.0, 476.0));
     Menu menu(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
     bool gra_w_toku = false;
+
     sf::Clock zegar;
+    sf::Texture background_texture;
+    sf::IntRect background(0,0,476.0,476.0);
+    background_texture.loadFromFile("textures/background.png");
+    sf::Sprite background1(background_texture, background);
+
+    Gracz dane;
+    dane = generuj();
+    FILE* plik;
+
     Player p1(50.0, 200.0);
 
     Enemy* przeciwnik1 = new Enemy();
@@ -26,31 +28,45 @@ int main() {
     Enemy* przeciwnik3 = new Enemy();
     Enemy* przeciwnik4 = new Enemy();
     Enemy* przeciwnik5 = new Enemy();
+    Enemy* przeciwnik6 = new Enemy();
 
+    Pocisk* pocisk = new Pocisk();
+    bool pocisk_flaga = false;
     while (window.isOpen())
     {
+
+
+        ////POCISK WARUNEK
+        if(pocisk_flaga == true){
+            pocisk ->przesun(2, p1);
+        }
+
+
+
         //OBSLUGA PRZECIWNIKOW/KOLIZJI
         if(menu_selected_flag==1){
-            przeciwnik1 -> move(-2,0);
-            przeciwnik2 -> move(-2,0);
-            przeciwnik3 -> move(-2,0);
-            przeciwnik4 -> move(-2,0);
+            przeciwnik1 -> move(-3,0);
+            przeciwnik2 -> move(-3.5,0);
+            przeciwnik3 -> move(-2.75,0);
+            przeciwnik4 -> move(-2.25,0);
             przeciwnik5 -> move(-2,0);
+            przeciwnik6 -> move(-3.25,0);
 
             if((kolizja(p1, przeciwnik1) == true)||
             (kolizja(p1, przeciwnik2) == true)||
             (kolizja(p1, przeciwnik3) == true)||
             (kolizja(p1, przeciwnik4) == true)||
-            (kolizja(p1, przeciwnik5) == true))
+            (kolizja(p1, przeciwnik5) == true)||
+            (kolizja(p1, przeciwnik6) == true))
             {
-                if(zegar.getElapsedTime().asSeconds() > 0.4f)
+                if(zegar.getElapsedTime().asSeconds() > 0.6f)
                 {
                     dane.zycie = dane.zycie - 1;
                     zegar.restart();
                 }
             }
         }
-        //WARUNEK KONCA GRY - dodac #napis
+        //WARUNEK KONCA GRY - dodac napis #GAME OVER
         if(dane.zycie == 0){
             myDelay(1000);
             window.close();
@@ -62,6 +78,19 @@ int main() {
 
             if (event.type == sf::Event::KeyPressed)
             {
+
+
+
+
+                ////POCISK
+                if(event.key.code == sf::Keyboard::Space){
+                    pocisk_flaga = true;
+                }
+
+
+
+
+
                 //DEBUG INTERFEJS
                 if(event.key.code == sf::Keyboard::C){
                     dane.zycie = dane.zycie - 1;
@@ -209,15 +238,16 @@ int main() {
 
         //START GRY
         if(menu_selected_flag==1){
-            //window.draw(background1);
-            oknoGlowne->draw(window);
-            oknoGlowne->update("Punkty zycia: " + std::to_string(dane.zycie) + "\n" + "Scores: " + std::to_string(dane.scores));
+            window.draw(background1);
+            interfejs->draw(window);
+            interfejs->update("Punkty zycia: " + std::to_string(dane.zycie) + "\n" + "Scores: " + std::to_string(dane.scores));
             window.draw(przeciwnik1->getEnemy());
             window.draw(p1.getPlayer());
             window.draw(przeciwnik2->getEnemy());
             window.draw(przeciwnik3->getEnemy());
             window.draw(przeciwnik4->getEnemy());
             window.draw(przeciwnik5->getEnemy());
+            window.draw(przeciwnik6->getEnemy());
         }
 
         //pokaz menu glowne
