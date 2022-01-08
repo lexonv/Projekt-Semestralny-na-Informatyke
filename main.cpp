@@ -156,12 +156,12 @@ int main() {
                 }
 
                 //DEBUG INTERFEJS
-                if(event.key.code == sf::Keyboard::C){
-                    dane.zycie = dane.zycie + 1;
-                }
-                if(event.key.code == sf::Keyboard::V){
-                    dane.scores = dane.scores + 10;
-                }
+//                if(event.key.code == sf::Keyboard::C){
+//                    dane.zycie = dane.zycie + 1;
+//                }
+//                if(event.key.code == sf::Keyboard::V){
+//                    dane.scores = dane.scores + 10;
+//                }
 
 
 
@@ -336,7 +336,6 @@ int main() {
                     zegar_koniec.restart();
                     czy_zrestartowano = true;
                 }
-                window.clear();
                 window.draw(*end);
                 if(zegar_koniec.getElapsedTime().asSeconds() > 2.0f)
                     window.close();
@@ -354,7 +353,6 @@ int main() {
             menu.draw(window);
         }
         window.display();
-
     }
     return 0;
 }

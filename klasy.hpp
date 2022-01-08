@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 
-//UZYTKOWNIK
+//GRACZ
 class Player{
 private:
     sf::Sprite gracz;
@@ -306,7 +306,6 @@ void zapiszDane(FILE *file, Gracz p)
     }
     fwrite(&p, sizeof(p), 2, file);
     fclose(file);
-
 }
 Gracz wczytajDane(FILE *file, Gracz dane){
     file = fopen("dane.dat", "rb");
@@ -400,7 +399,6 @@ public:
         this->rotate(5);
         this->setString("Game Over!");
     }
-
 };
 
 
@@ -438,6 +436,7 @@ void Enemy::move(float dx, float dy){
 
     sf::Vector2f pos;
     std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(480,500);
     std::uniform_int_distribution<> distY(50,420);
     pos.x = dx * vel.x;
 
@@ -447,15 +446,17 @@ void Enemy::move(float dx, float dy){
     else
         ksztalt_enemy.left += 64;
     enemy.setTextureRect(ksztalt_enemy);
-    if(getPos().x<=-30)
-        enemy.setPosition(500, distY(gen));
+    if(getPos().x<=-30){
+        enemy.setPosition(distX(gen), distY(gen));
+    }
     enemy.move(pos);
 }
 
 void Enemy::respawn(){
     std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(480,500);
     std::uniform_int_distribution<> distY(50,420);
-    enemy.setPosition(500, distY(gen));
+    enemy.setPosition(distX(gen), distY(gen));
 }
 
 //KOLIZJA GRACZA Z PRZECIWNIKIEM
@@ -534,9 +535,6 @@ bool kolizja(Pocisk pocisk, Enemy *przeciwnik) //DO POPRAWY
     if(sqrt((pocisk.getPos_pocisk().x - przeciwnik->getPos().x)*(pocisk.getPos_pocisk().x - przeciwnik->getPos().x)+
             (pocisk.getPos_pocisk().y - przeciwnik->getPos().y)*(pocisk.getPos_pocisk().y - przeciwnik->getPos().y))<30)
     {
-//        std::cout<<"====== Kolizja w: ======"<<std::endl;
-//        std::cout<<"przeciwnik.x = "<<przeciwnik->getPos().x<<", przeciwnik.y = "<<przeciwnik->getPos().y<<std::endl;
-//        std::cout<<"pocisk.x = "<<pocisk.getPos_pocisk().x<<", pocisk.y = "<<pocisk.getPos_pocisk().y<<std::endl;
         return true;
     }
     return false;
