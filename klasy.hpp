@@ -410,14 +410,15 @@ private:
     sf::IntRect ksztalt_enemy;
     sf::Texture texture_enemy;
     sf::Vector2f position_enemy;
-    sf::Vector2f vel = { 0.2f, 0.2f};
+    sf::Vector2f vel = { 0.4f, 0.4f};
     std::random_device rd;
 public:
     Enemy();
-    void move(float, float);
+    void move(float);
     sf::Sprite getEnemy(){ return enemy; }
     sf::Vector2f getPos() { return enemy.getPosition();}
     void respawn();
+    void speed(float);
 };
 
 Enemy::Enemy(){
@@ -432,7 +433,7 @@ Enemy::Enemy(){
     enemy.setPosition(position_enemy);
 }
 
-void Enemy::move(float dx, float dy){
+void Enemy::move(float dx){
 
     sf::Vector2f pos;
     std::mt19937 gen(rd());
@@ -459,6 +460,11 @@ void Enemy::respawn(){
     enemy.setPosition(distX(gen), distY(gen));
 }
 
+void Enemy::speed(float speed){
+    vel.x = speed;
+    vel.y = speed;
+}
+
 //KOLIZJA GRACZA Z PRZECIWNIKIEM
 bool kolizja(Player gracz, Enemy *przeciwnik)
 {
@@ -475,14 +481,15 @@ bool kolizja(Player gracz, Enemy *przeciwnik)
 //LOGIKA DZIALANIA POCISKU
 class Pocisk{
 private:
-    sf::CircleShape pocisk;
+    sf::Sprite pocisk;
+    sf::Texture tekstura_pocisk;
     sf::Vector2f position_pocisk;
     sf::Vector2f vel = {1.0f, 1.0f};
-    sf::RectangleShape ksztalt_pocisk;
+    sf::IntRect ksztalt_pocisk;
 public:
     Pocisk(Player);
     void move_pocisk(float, Player);
-    sf::CircleShape getPocisk();
+    sf::Sprite getPocisk();
     void set_pocisk(Player);
     bool warunek_pocisk();
     sf::Vector2f getPos_pocisk() { return pocisk.getPosition(); }
@@ -490,28 +497,37 @@ public:
 };
 
 Pocisk::Pocisk(Player p){
-    position_pocisk.x = -50.0f;
+    tekstura_pocisk.loadFromFile("textures/fireball.png");
+    ksztalt_pocisk = sf::IntRect({0, 0, 512, 512});
+    position_pocisk.x = -100.0f;
     position_pocisk.y = -50.0f;
-    pocisk.setFillColor(sf::Color::Red);
-    pocisk.setRadius(10.f);
+    pocisk = sf::Sprite (tekstura_pocisk, ksztalt_pocisk);
     pocisk.setPosition(position_pocisk);
+    pocisk.setScale(0.2f, 0.2f);
 }
 
 void Pocisk::set_pocisk(Player p) {
-    position_pocisk.x = p.getPos().x+22.0f;
-    position_pocisk.y = p.getPos().y+24.0f;
+    position_pocisk.x = p.getPos().x;
+    position_pocisk.y = p.getPos().y;
     pocisk.setPosition(position_pocisk);
 }
 
 void Pocisk::move_pocisk(float dx, Player p){
     sf::Vector2f pos;
+    ksztalt_pocisk.top = 0;
+    if(ksztalt_pocisk.left == 3072)
+        ksztalt_pocisk.left = 0;
+    else
+        ksztalt_pocisk.left += 512;
+    pocisk.setTextureRect(ksztalt_pocisk);
+
     if(position_pocisk.x<=480){
         pos.x = dx * vel.x;
         pocisk.move(pos);
     }
 }
 
-sf::CircleShape Pocisk::getPocisk() {
+sf::Sprite Pocisk::getPocisk() {
     return pocisk;
 }
 
@@ -524,7 +540,7 @@ bool Pocisk::warunek_pocisk() {
 }
 
 void Pocisk::respawn_pocisk() {
-    position_pocisk.x = -50.0f;
+    position_pocisk.x = -100.0f;
     position_pocisk.y = -50.0f;
     pocisk.setPosition(position_pocisk);
 }

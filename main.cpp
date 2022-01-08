@@ -20,14 +20,13 @@ int main() {
     //STWORZ TLO GRA
     sf::Texture background_texture;
     sf::IntRect background(0,0,476.0,476.0);
-    background_texture.loadFromFile("textures/background.png");
+    background_texture.loadFromFile("textures/background1.png");
     sf::Sprite background1(background_texture, background);
 
     //STWORZ TLO MENU
     sf::Texture tlo_menu_texture;
-    sf::IntRect tlo_menu_ksztalt(0,0,760.0,505.0);
     tlo_menu_texture.loadFromFile("textures/pg.jpeg");
-    sf::Sprite tlo_menu(tlo_menu_texture, tlo_menu_ksztalt);
+    sf::Sprite tlo_menu(tlo_menu_texture, background);
 
     //STWORZ DANE
     Gracz dane;
@@ -56,23 +55,23 @@ int main() {
         //OBSLUGA KOLIZJI PRZECIWNIK - PLAYER
         if(menu_selected_flag==1)
         {
-            przeciwnik1 -> move(-2.60,0);
-            przeciwnik2 -> move(-3.5,0);
-            przeciwnik3 -> move(-2.75,0);
-            przeciwnik4 -> move(-2.25,0);
-            przeciwnik5 -> move(-2.8,0);
-            przeciwnik6 -> move(-3.25,0);
-            przeciwnik7 -> move(-3.5,0);
-            przeciwnik8 -> move(-3.3,0);
+            przeciwnik1 -> move(-2.60);
+            przeciwnik2 -> move(-3.5);
+            przeciwnik3 -> move(-2.75);
+            przeciwnik4 -> move(-2.25);
+            przeciwnik5 -> move(-2.8);
+            przeciwnik6 -> move(-3.25);
+            przeciwnik7 -> move(-3.5);
+            przeciwnik8 -> move(-3.3);
 
             if((kolizja(p1, przeciwnik1) == true)||
-            (kolizja(p1, przeciwnik2) == true)||
-            (kolizja(p1, przeciwnik3) == true)||
-            (kolizja(p1, przeciwnik4) == true)||
-            (kolizja(p1, przeciwnik5) == true)||
-            (kolizja(p1, przeciwnik6) == true)||
-            (kolizja(p1, przeciwnik7) == true)||
-            (kolizja(p1, przeciwnik8) == true))
+               (kolizja(p1, przeciwnik2) == true)||
+               (kolizja(p1, przeciwnik3) == true)||
+               (kolizja(p1, przeciwnik4) == true)||
+               (kolizja(p1, przeciwnik5) == true)||
+               (kolizja(p1, przeciwnik6) == true)||
+               (kolizja(p1, przeciwnik7) == true)||
+               (kolizja(p1, przeciwnik8) == true))
             {
                 if(zegar_kolizja.getElapsedTime().asSeconds() > 0.6f)
                 {
@@ -85,7 +84,7 @@ int main() {
 
             //OBSLUGA POCISKU
             if (pocisk_flaga == true) {
-                pocisk.move_pocisk(1.25, p1);
+                pocisk.move_pocisk(4, p1);
                 zegar_pocisk.restart();
             }
 
@@ -129,12 +128,12 @@ int main() {
                 dane.scores += 10;
             }
             if(kolizja(pocisk, przeciwnik7) == true){
-                przeciwnik6->respawn();
+                przeciwnik7->respawn();
                 pocisk.respawn_pocisk();
                 dane.scores += 10;
             }
             if(kolizja(pocisk, przeciwnik8) == true){
-                przeciwnik6->respawn();
+                przeciwnik8->respawn();
                 pocisk.respawn_pocisk();
                 dane.scores += 10;
             }
@@ -185,7 +184,7 @@ int main() {
                 }
 
                 if(event.key.code == sf::Keyboard::F1 && menu_selected_flag == 1) {
-                   menu_selected_flag = 2;
+                    menu_selected_flag = 2;
                 }
 
 
@@ -274,17 +273,41 @@ int main() {
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1) {
                 std::cout << "Wybrano Poziom Latwy"<< std::endl;
                 dane = poziom(4);
+                przeciwnik1->speed(0.2);
+                przeciwnik2->speed(0.2);
+                przeciwnik3->speed(0.2);
+                przeciwnik4->speed(0.2);
+                przeciwnik5->speed(0.2);
+                przeciwnik6->speed(0.2);
+                przeciwnik7->speed(0.2);
+                przeciwnik8->speed(0.2);
                 menu_selected_flag = 0;
             }
 
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2) {
                 std::cout << "Wybrano Poziom Normalny"<< std::endl;
                 dane = poziom(2);
+                przeciwnik1->speed(0.4);
+                przeciwnik2->speed(0.4);
+                przeciwnik3->speed(0.4);
+                przeciwnik4->speed(0.4);
+                przeciwnik5->speed(0.4);
+                przeciwnik6->speed(0.4);
+                przeciwnik7->speed(0.4);
+                przeciwnik8->speed(0.4);
                 menu_selected_flag = 0;
             }
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
                 std::cout << "Wybrano Poziom Trudny"<< std::endl;
                 dane = poziom(1);
+                przeciwnik1->speed(0.8);
+                przeciwnik2->speed(0.8);
+                przeciwnik3->speed(0.8);
+                przeciwnik4->speed(0.8);
+                przeciwnik5->speed(0.8);
+                przeciwnik6->speed(0.8);
+                przeciwnik7->speed(0.8);
+                przeciwnik8->speed(0.8);
                 menu_selected_flag = 0;
             }
         }
@@ -298,7 +321,7 @@ int main() {
             window.draw(tlo_menu);
             menu.draw(window);
             if ((event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5 && gra_w_toku == true)
-            || (event.key.code == sf::Keyboard::Escape && gra_w_toku == true))
+                || (event.key.code == sf::Keyboard::Escape && gra_w_toku == true))
             {
                 menu_selected_flag = 1;
             }
