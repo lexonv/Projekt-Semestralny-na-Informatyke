@@ -5,72 +5,142 @@
 
 int main() {
     sf::Event event;
-    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Szkieletor Atakuje");
+    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Sesja egzaminacyjna");
     Interfejs* interfejs = new Interfejs(sf::Vector2f(476.0, 476.0));
     Menu menu(window.getSize().x, window.getSize().y);
     int menu_selected_flag = 0;
     bool gra_w_toku = false;
 
-    sf::Clock zegar;
+    //STWORZ NAPIS GAMEOVER
+    gameOver* end = new gameOver;
+    bool czy_zrestartowano = false;
+
+    sf::Clock zegar_kolizja, zegar_koniec, zegar_pocisk;
+
+    //STWORZ TLO GRA
     sf::Texture background_texture;
     sf::IntRect background(0,0,476.0,476.0);
     background_texture.loadFromFile("textures/background.png");
     sf::Sprite background1(background_texture, background);
 
+    //STWORZ TLO MENU
+    sf::Texture tlo_menu_texture;
+    sf::IntRect tlo_menu_ksztalt(0,0,760.0,505.0);
+    tlo_menu_texture.loadFromFile("textures/pg.jpeg");
+    sf::Sprite tlo_menu(tlo_menu_texture, tlo_menu_ksztalt);
+
+    //STWORZ DANE
     Gracz dane;
     dane = generuj();
     FILE* plik;
 
     Player p1(50.0, 200.0);
 
+    //STWORZ 8 PRZECIWNIKOW
     Enemy* przeciwnik1 = new Enemy();
     Enemy* przeciwnik2 = new Enemy();
     Enemy* przeciwnik3 = new Enemy();
     Enemy* przeciwnik4 = new Enemy();
     Enemy* przeciwnik5 = new Enemy();
     Enemy* przeciwnik6 = new Enemy();
+    Enemy* przeciwnik7 = new Enemy();
+    Enemy* przeciwnik8 = new Enemy();
 
-    Pocisk* pocisk = new Pocisk();
+    //STWORZ POCISK
+    Pocisk pocisk(p1);
     bool pocisk_flaga = false;
+
     while (window.isOpen())
     {
 
-
-        ////POCISK WARUNEK
-        if(pocisk_flaga == true){
-            pocisk ->przesun(2, p1);
-        }
-
-
-
-        //OBSLUGA PRZECIWNIKOW/KOLIZJI
-        if(menu_selected_flag==1){
-            przeciwnik1 -> move(-3,0);
+        //OBSLUGA KOLIZJI PRZECIWNIK - PLAYER
+        if(menu_selected_flag==1)
+        {
+            przeciwnik1 -> move(-2.60,0);
             przeciwnik2 -> move(-3.5,0);
             przeciwnik3 -> move(-2.75,0);
             przeciwnik4 -> move(-2.25,0);
-            przeciwnik5 -> move(-2,0);
+            przeciwnik5 -> move(-2.8,0);
             przeciwnik6 -> move(-3.25,0);
+            przeciwnik7 -> move(-3.5,0);
+            przeciwnik8 -> move(-3.3,0);
 
             if((kolizja(p1, przeciwnik1) == true)||
             (kolizja(p1, przeciwnik2) == true)||
             (kolizja(p1, przeciwnik3) == true)||
             (kolizja(p1, przeciwnik4) == true)||
             (kolizja(p1, przeciwnik5) == true)||
-            (kolizja(p1, przeciwnik6) == true))
+            (kolizja(p1, przeciwnik6) == true)||
+            (kolizja(p1, przeciwnik7) == true)||
+            (kolizja(p1, przeciwnik8) == true))
             {
-                if(zegar.getElapsedTime().asSeconds() > 0.6f)
+                if(zegar_kolizja.getElapsedTime().asSeconds() > 0.6f)
                 {
                     dane.zycie = dane.zycie - 1;
-                    zegar.restart();
+                    zegar_kolizja.restart();
                 }
             }
+
+
+
+            //OBSLUGA POCISKU
+            if (pocisk_flaga == true) {
+                pocisk.move_pocisk(1.25, p1);
+                zegar_pocisk.restart();
+            }
+
+            if (pocisk.warunek_pocisk() == true)
+            {
+                pocisk.respawn_pocisk();
+                pocisk_flaga = false;
+            }
+
+
+
+            //OBSLUGA KOLIZJI POCISK - PRZECIWNIK
+            if(kolizja(pocisk, przeciwnik1) == true){
+                przeciwnik1->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+            if(kolizja(pocisk, przeciwnik2) == true){
+                przeciwnik2->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+            if(kolizja(pocisk, przeciwnik3) == true){
+                przeciwnik3->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+            if(kolizja(pocisk, przeciwnik4) == true){
+                przeciwnik4->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+            if(kolizja(pocisk, przeciwnik5) == true){
+                przeciwnik5->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+            if(kolizja(pocisk, przeciwnik6) == true){
+                przeciwnik6->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+            if(kolizja(pocisk, przeciwnik7) == true){
+                przeciwnik6->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+            if(kolizja(pocisk, przeciwnik8) == true){
+                przeciwnik6->respawn();
+                pocisk.respawn_pocisk();
+                dane.scores += 10;
+            }
+
         }
-        //WARUNEK KONCA GRY - dodac napis #GAME OVER
-        if(dane.zycie == 0){
-            myDelay(1000);
-            window.close();
-        }
+
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
@@ -79,32 +149,21 @@ int main() {
             if (event.type == sf::Event::KeyPressed)
             {
 
-
-
-
-                ////POCISK
-                if(event.key.code == sf::Keyboard::Space){
+                //STRZELAJ POCISKIEM
+                if(event.key.code == sf::Keyboard::Space && pocisk.warunek_pocisk() == true && zegar_pocisk.getElapsedTime().asSeconds() > 2.0f){
+                    pocisk.set_pocisk(p1);
                     pocisk_flaga = true;
                 }
 
-
-
-
-
                 //DEBUG INTERFEJS
                 if(event.key.code == sf::Keyboard::C){
-                    dane.zycie = dane.zycie - 1;
-                    std::cout<<"dane.zycie = "<<dane.zycie<<std::endl;
+                    dane.zycie = dane.zycie + 1;
                 }
                 if(event.key.code == sf::Keyboard::V){
                     dane.scores = dane.scores + 10;
-                    std::cout<<"dane.scores = "<<dane.scores<<std::endl;
                 }
-                if(event.key.code == sf::Keyboard::P){
-                    std::cout<<"!Aktualne dane!"<<std::endl;
-                    std::cout<<"dane.zycie = "<<dane.zycie<<std::endl;
-                    std::cout<<"dane.scores = "<<dane.scores<<std::endl;
-                }
+
+
 
                 //STEROWANIE MENU
                 if (event.key.code == sf::Keyboard::Up)
@@ -118,15 +177,18 @@ int main() {
                     menu.przesunD();
                 }
 
+
+
                 //POWROT DO MENU
                 if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1){
                     menu_selected_flag = 0;
                 }
 
-
                 if(event.key.code == sf::Keyboard::F1 && menu_selected_flag == 1) {
                    menu_selected_flag = 2;
                 }
+
+
 
                 //MENU GŁOWNE -WYBOR
                 if (menu_selected_flag == 0)
@@ -165,6 +227,7 @@ int main() {
                 }
 
 
+
                 //STEROWANIE
                 if(menu_selected_flag == 1)
                 {
@@ -189,7 +252,10 @@ int main() {
             }
         }
         window.clear();
-        //zapisz do pliku
+
+
+
+        //ZAPISZ DO PLIKU
         if(menu_selected_flag == 4){
             std::cout << "Zapisz..."<< std::endl;
             plik = fopen("dane.dat", "w+b");
@@ -197,10 +263,13 @@ int main() {
             menu_selected_flag = 0;
         }
 
-        //wybor poziomu
+
+
+        //WYBOR POZIOMU
         if(menu_selected_flag == 3){
             menu.poziomtrudnosci(window.getSize().x, window.getSize().y);
             window.clear();
+            window.draw(tlo_menu);
             menu.draw(window);
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1) {
                 std::cout << "Wybrano Poziom Latwy"<< std::endl;
@@ -219,10 +288,14 @@ int main() {
                 menu_selected_flag = 0;
             }
         }
-        //pokaz sterowanie
+
+
+
+        //POKAZ STEROWANIE
         if(menu_selected_flag == 2){
             menu.pomoc(window.getSize().x, window.getSize().y);
             window.clear();
+            window.draw(tlo_menu);
             menu.draw(window);
             if ((event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 5 && gra_w_toku == true)
             || (event.key.code == sf::Keyboard::Escape && gra_w_toku == true))
@@ -236,24 +309,48 @@ int main() {
             }
         }
 
+
+
         //START GRY
         if(menu_selected_flag==1){
             window.draw(background1);
             interfejs->draw(window);
             interfejs->update("Punkty zycia: " + std::to_string(dane.zycie) + "\n" + "Scores: " + std::to_string(dane.scores));
-            window.draw(przeciwnik1->getEnemy());
+
             window.draw(p1.getPlayer());
+            window.draw(przeciwnik1->getEnemy());
             window.draw(przeciwnik2->getEnemy());
             window.draw(przeciwnik3->getEnemy());
             window.draw(przeciwnik4->getEnemy());
             window.draw(przeciwnik5->getEnemy());
             window.draw(przeciwnik6->getEnemy());
+            window.draw(przeciwnik7->getEnemy());
+            window.draw(przeciwnik8->getEnemy());
+            window.draw(pocisk.getPocisk());
+
+            //WARUNEK KONCA GRY #GAME_OVER
+            if(dane.zycie <= 0)
+            {
+                if(czy_zrestartowano == false)
+                {
+                    zegar_koniec.restart();
+                    czy_zrestartowano = true;
+                }
+                window.clear();
+                window.draw(*end);
+                if(zegar_koniec.getElapsedTime().asSeconds() > 2.0f)
+                    window.close();
+            }
+
         }
 
-        //pokaz menu glowne
-        if(menu_selected_flag==0) {
-            menu.menuglowne(window.getSize().x, window.getSize().y);
+
+
+        //POKAZ MENU GLOWNE
+        if(menu_selected_flag==0){
             window.clear();
+            window.draw(tlo_menu);
+            menu.menuglowne(window.getSize().x, window.getSize().y);
             menu.draw(window);
         }
         window.display();

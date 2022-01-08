@@ -40,7 +40,7 @@ void Player::moveW(float xt, float yt){
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
 
-    if(getPos().y <= 0){
+    if(getPos().y <= 55){
         pos.y = 0;
     }
     gracz.move(pos);
@@ -110,7 +110,6 @@ private:
 
 public:
     Menu(float width, float height);
-    ~Menu() {};
     void przesunG();//przesun do gory
     void przesunD();//przesun w dol
     int getSelectedItem() { return selectedItem; }//zwroc poziom menu
@@ -129,19 +128,19 @@ void Menu::poziomtrudnosci(float width, float height) {
     }
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Trudnosc:");
+    menu[0].setString("Sesja:");
     menu[0].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 1));
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Latwy");
+    menu[1].setString("Zerowa");
     menu[1].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 2));
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Normalny");
+    menu[2].setString("Podstawowa");
     menu[2].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 3));
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("Trudny");
+    menu[3].setString("Poprawkowa");
     menu[3].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 4));
 }
 
@@ -205,6 +204,30 @@ Menu::Menu(float width, float height){
         std::cout<<"ER00R"<<std::endl;
         return;
     }
+    menu[0].setFont(font);
+    menu[0].setFillColor(sf::Color::White);
+    menu[0].setString("Graj");
+    menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
+    menu[1].setFont(font);
+    menu[1].setFillColor(sf::Color::White);
+    menu[1].setString("Wczytaj");
+    menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
+    menu[2].setFont(font);
+    menu[2].setFillColor(sf::Color::White);
+    menu[2].setString("Sterowanie");
+    menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
+    menu[3].setFont(font);
+    menu[3].setFillColor(sf::Color::White);
+    menu[3].setString("Zapisz");
+    menu[3].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 4));
+    menu[4].setFont(font);
+    menu[4].setFillColor(sf::Color::White);
+    menu[4].setString("Trudnosc");
+    menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
+    menu[5].setFont(font);
+    menu[5].setFillColor(sf::Color::Red);
+    menu[5].setString("Wyjscie");
+    menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
 
 void Menu::draw(sf::RenderWindow &window)
@@ -241,7 +264,7 @@ void Menu::przesunD()
         selectedItem++;
         if (selectedItem >= max_poziom)
             selectedItem = 0;
-        menu[selectedItem].setFillColor(sf::Color::Red);
+        menu[selectedItem].setFillColor(sf::Color::White);
         menu[selectedItem].setStyle(sf::Text::Bold);
     }
 }
@@ -336,7 +359,7 @@ void Interfejs::inicjuj() {
     goraLewy->setFont(*czcionka);
     goraLewy->setCharacterSize(18);
     goraLewy->setPosition(10, 5);
-    goraLewy->setFillColor(sf::Color::White);
+    goraLewy->setFillColor(sf::Color::Black);
     goraLewy->setStyle(sf::Text::Bold);
     goraLewy->setString("DEBUG");
 }
@@ -360,6 +383,28 @@ void Interfejs::draw(sf::RenderWindow& okno) {
 
 
 
+//GAME OVER
+class gameOver :public sf::Text {
+private:
+    sf::Font czcionka;
+public:
+    gameOver() {
+        if (!czcionka.loadFromFile("fonts/vikingfont.ttf"))
+            return;
+
+        this->setFont(czcionka);
+        this->setCharacterSize(50);
+        this->setPosition(30, 200);
+        this->setFillColor(sf::Color::Red);
+        this->setStyle(sf::Text::Bold);
+        this->rotate(5);
+        this->setString("Game Over!");
+    }
+
+};
+
+
+
 //PRZECIWNICY
 class Enemy{
 private:
@@ -371,15 +416,16 @@ private:
     std::random_device rd;
 public:
     Enemy();
-    void move(int, int);
+    void move(float, float);
     sf::Sprite getEnemy(){ return enemy; }
     sf::Vector2f getPos() { return enemy.getPosition();}
+    void respawn();
 };
 
 Enemy::Enemy(){
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distX(300,480);
-    std::uniform_int_distribution<> distY(50,450);
+    std::uniform_int_distribution<> distY(100,400);
     position_enemy.x = distX(gen);
     position_enemy.y = distY(gen);
     texture_enemy.loadFromFile("textures/szkieletor.png");
@@ -388,12 +434,11 @@ Enemy::Enemy(){
     enemy.setPosition(position_enemy);
 }
 
-void Enemy::move(int dx, int dy){
-
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distY(100,200);
+void Enemy::move(float dx, float dy){
 
     sf::Vector2f pos;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distY(50,420);
     pos.x = dx * vel.x;
 
     ksztalt_enemy.top = 60;
@@ -402,30 +447,23 @@ void Enemy::move(int dx, int dy){
     else
         ksztalt_enemy.left += 64;
     enemy.setTextureRect(ksztalt_enemy);
-
     if(getPos().x<=-30)
-    {
-        pos.x = 500;
-//        pos.y = distY(gen);
-    }
+        enemy.setPosition(500, distY(gen));
     enemy.move(pos);
 }
 
+void Enemy::respawn(){
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distY(50,420);
+    enemy.setPosition(500, distY(gen));
+}
 
+//KOLIZJA GRACZA Z PRZECIWNIKIEM
 bool kolizja(Player gracz, Enemy *przeciwnik)
 {
-    Gracz dane;
     if(sqrt((gracz.getPos().x - przeciwnik->getPos().x)*(gracz.getPos().x - przeciwnik->getPos().x)+
             (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<20)
     {
-        //Do sprawdzania bledow
-        std::cout<<std::endl;
-        std::cout<<"========================================"<<std::endl;
-        std::cout<<"gracz.x = "<<gracz.getPos().x<<std::endl;
-        std::cout<<"gracz.y = "<<gracz.getPos().y<<std::endl;
-        std::cout<<"przeciwnik.x = "<<przeciwnik->getPos().x<<std::endl;
-        std::cout<<"przeciwnik.y = "<<przeciwnik->getPos().y<<std::endl;
-        std::cout<<"========================================"<<std::endl;
         return true;
     }
     return false;
@@ -436,40 +474,70 @@ bool kolizja(Player gracz, Enemy *przeciwnik)
 //LOGIKA DZIALANIA POCISKU
 class Pocisk{
 private:
-    sf::Sprite *pocisk;
-    sf::IntRect ksztalt_pocisk;
-    sf::Texture texture_pocisk;
+    sf::CircleShape pocisk;
     sf::Vector2f position_pocisk;
-    sf::Vector2f vel = { 0.5f, 0.5f};
+    sf::Vector2f vel = {1.0f, 1.0f};
+    sf::RectangleShape ksztalt_pocisk;
 public:
-    Pocisk();
-    ~Pocisk(){delete pocisk;};
-    void strzal(Player);
-    void przesun(int, Player);
-    sf::Sprite getPocisk(){ return *pocisk; }
+    Pocisk(Player);
+    void move_pocisk(float, Player);
+    sf::CircleShape getPocisk();
+    void set_pocisk(Player);
+    bool warunek_pocisk();
+    sf::Vector2f getPos_pocisk() { return pocisk.getPosition(); }
+    void respawn_pocisk();
 };
-Pocisk::Pocisk() {
-    texture_pocisk.loadFromFile("textures/pocisk.png");
-    ksztalt_pocisk = sf::IntRect({0, 0, 100, 97});
-    pocisk = new sf::Sprite (texture_pocisk, ksztalt_pocisk);
+
+Pocisk::Pocisk(Player p){
+    position_pocisk.x = -50.0f;
+    position_pocisk.y = -50.0f;
+    pocisk.setFillColor(sf::Color::Red);
+    pocisk.setRadius(10.f);
+    pocisk.setPosition(position_pocisk);
 }
 
-void Pocisk::przesun(int dx, Player gracz){
+void Pocisk::set_pocisk(Player p) {
+    position_pocisk.x = p.getPos().x+22.0f;
+    position_pocisk.y = p.getPos().y+24.0f;
+    pocisk.setPosition(position_pocisk);
+}
+
+void Pocisk::move_pocisk(float dx, Player p){
     sf::Vector2f pos;
-    pos.x = gracz.getPos().x + dx * vel.x;
-    pos.y = gracz.getPos().y;
-    ksztalt_pocisk.top = 0;
-    if(ksztalt_pocisk.left == 387)
-        ksztalt_pocisk.left = 0;
+    if(position_pocisk.x<=480){
+        pos.x = dx * vel.x;
+        pocisk.move(pos);
+    }
+}
+
+sf::CircleShape Pocisk::getPocisk() {
+    return pocisk;
+}
+
+bool Pocisk::warunek_pocisk() {
+    if(pocisk.getPosition().x >=480 || pocisk.getPosition().x <= 0){
+        return true;
+    }
     else
-        ksztalt_pocisk.left += 0;
-    pocisk->setTextureRect(ksztalt_pocisk);
+        return false;
 }
 
-void Pocisk::strzal(Player gracz) {
-
+void Pocisk::respawn_pocisk() {
+    position_pocisk.x = -50.0f;
+    position_pocisk.y = -50.0f;
+    pocisk.setPosition(position_pocisk);
 }
 
-
-
-
+//KOLIZJA POCISKU Z PRZECIWNIKIEM
+bool kolizja(Pocisk pocisk, Enemy *przeciwnik) //DO POPRAWY
+{
+    if(sqrt((pocisk.getPos_pocisk().x - przeciwnik->getPos().x)*(pocisk.getPos_pocisk().x - przeciwnik->getPos().x)+
+            (pocisk.getPos_pocisk().y - przeciwnik->getPos().y)*(pocisk.getPos_pocisk().y - przeciwnik->getPos().y))<30)
+    {
+//        std::cout<<"====== Kolizja w: ======"<<std::endl;
+//        std::cout<<"przeciwnik.x = "<<przeciwnik->getPos().x<<", przeciwnik.y = "<<przeciwnik->getPos().y<<std::endl;
+//        std::cout<<"pocisk.x = "<<pocisk.getPos_pocisk().x<<", pocisk.y = "<<pocisk.getPos_pocisk().y<<std::endl;
+        return true;
+    }
+    return false;
+}
