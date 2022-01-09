@@ -184,7 +184,7 @@ int main() {
                 if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1){
                     menu_selected_flag = 0;
                 }
-                
+
                 if(event.key.code == sf::Keyboard::F1 && menu_selected_flag == 1) {
                     menu_selected_flag = 2;
                 }
