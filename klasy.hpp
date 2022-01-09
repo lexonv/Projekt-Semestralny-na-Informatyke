@@ -16,7 +16,7 @@ public:
     void moveS(float x, float y);
     void moveD(float x, float y);
     Player(float x, float y);
-    sf::Sprite getPlayer(){ return gracz; }
+    sf::Sprite& getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
 };
 
@@ -344,7 +344,7 @@ private:
 
 public:
     Healthbar();
-    sf::Sprite getHealthbar(){return healthbar;}
+    sf::Sprite& getHealthbar(){return healthbar;}
     void update_hp(Gracz);
 };
 
@@ -360,7 +360,7 @@ Healthbar::Healthbar() {
 }
 
 void Healthbar::update_hp(Gracz dane) {
-    if(dane.zycie == 4)
+    if(dane.zycie >= 4)
         ksztalt.top = 895;
     if(dane.zycie == 3)
         ksztalt.top = 525;
@@ -447,12 +447,12 @@ private:
     sf::IntRect ksztalt_enemy;
     sf::Texture texture_enemy;
     sf::Vector2f position_enemy;
-    sf::Vector2f vel = { 0.4f, 0.4f};
+    sf::Vector2f vel = { 0.8f, 0.8f};
     std::random_device rd;
 public:
     Enemy();
     void move(float);
-    sf::Sprite getEnemy(){ return enemy; }
+    sf::Sprite &getEnemy(){ return enemy; }
     sf::Vector2f getPos() { return enemy.getPosition();}
     void respawn();
     void speed(float);
@@ -506,7 +506,7 @@ void Enemy::speed(float speed){
 bool kolizja(Player gracz, Enemy *przeciwnik)
 {
     if(sqrt((gracz.getPos().x - przeciwnik->getPos().x)*(gracz.getPos().x - przeciwnik->getPos().x)+
-            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<20)
+            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<30)
     {
         return true;
     }
@@ -526,7 +526,7 @@ private:
 public:
     Pocisk(Player);
     void move_pocisk(float, Player);
-    sf::Sprite getPocisk();
+    sf::Sprite& getPocisk(){ return pocisk;};
     void set_pocisk(Player);
     bool warunek_pocisk();
     sf::Vector2f getPos_pocisk() { return pocisk.getPosition(); }
@@ -564,10 +564,6 @@ void Pocisk::move_pocisk(float dx, Player p){
     }
 }
 
-sf::Sprite Pocisk::getPocisk() {
-    return pocisk;
-}
-
 bool Pocisk::warunek_pocisk() {
     if(pocisk.getPosition().x >=480 || pocisk.getPosition().x <= 0){
         return true;
@@ -592,6 +588,3 @@ bool kolizja(Pocisk pocisk, Enemy *przeciwnik) //DO POPRAWY
     }
     return false;
 }
-
-
-

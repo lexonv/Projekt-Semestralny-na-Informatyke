@@ -7,9 +7,13 @@ int main() {
     sf::Event event;
     sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Sesja egzaminacyjna");
     window.setFramerateLimit(60);
+
     Interfejs* interfejs = new Interfejs(sf::Vector2f(476.0, 476.0));
     Menu menu(window.getSize().x, window.getSize().y);
+
+
     Healthbar hp;
+
     int menu_selected_flag = 0;
     bool gra_w_toku = false;
     //STWORZ NAPIS GAMEOVER
@@ -58,7 +62,7 @@ int main() {
             przeciwnik1 -> move(-2.60);
             przeciwnik2 -> move(-3.5);
             przeciwnik3 -> move(-2.75);
-            przeciwnik4 -> move(-2.25);
+            przeciwnik4 -> move(-2.45);
             przeciwnik5 -> move(-2.8);
             przeciwnik6 -> move(-3.25);
             przeciwnik7 -> move(-3.5);
@@ -79,8 +83,6 @@ int main() {
                     zegar_kolizja.restart();
                 }
             }
-
-
 
             //OBSLUGA POCISKU
             if (pocisk_flaga == true) {
@@ -182,7 +184,7 @@ int main() {
                 if (event.key.code == sf::Keyboard::Escape && menu_selected_flag == 1){
                     menu_selected_flag = 0;
                 }
-
+                
                 if(event.key.code == sf::Keyboard::F1 && menu_selected_flag == 1) {
                     menu_selected_flag = 2;
                 }
@@ -273,20 +275,6 @@ int main() {
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1) {
                 std::cout << "Wybrano Poziom Latwy"<< std::endl;
                 dane = poziom(4);
-                przeciwnik1->speed(0.2);
-                przeciwnik2->speed(0.2);
-                przeciwnik3->speed(0.2);
-                przeciwnik4->speed(0.2);
-                przeciwnik5->speed(0.2);
-                przeciwnik6->speed(0.2);
-                przeciwnik7->speed(0.2);
-                przeciwnik8->speed(0.2);
-                menu_selected_flag = 0;
-            }
-
-            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2) {
-                std::cout << "Wybrano Poziom Normalny"<< std::endl;
-                dane = poziom(2);
                 przeciwnik1->speed(0.4);
                 przeciwnik2->speed(0.4);
                 przeciwnik3->speed(0.4);
@@ -295,6 +283,20 @@ int main() {
                 przeciwnik6->speed(0.4);
                 przeciwnik7->speed(0.4);
                 przeciwnik8->speed(0.4);
+                menu_selected_flag = 0;
+            }
+
+            if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2) {
+                std::cout << "Wybrano Poziom Normalny"<< std::endl;
+                dane = poziom(2);
+                przeciwnik1->speed(0.8);
+                przeciwnik2->speed(0.8);
+                przeciwnik3->speed(0.8);
+                przeciwnik4->speed(0.8);
+                przeciwnik5->speed(0.8);
+                przeciwnik6->speed(0.8);
+                przeciwnik7->speed(0.8);
+                przeciwnik8->speed(0.8);
                 menu_selected_flag = 0;
             }
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
