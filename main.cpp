@@ -6,11 +6,12 @@
 int main() {
     sf::Event event;
     sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Sesja egzaminacyjna");
+    window.setFramerateLimit(60);
     Interfejs* interfejs = new Interfejs(sf::Vector2f(476.0, 476.0));
     Menu menu(window.getSize().x, window.getSize().y);
+    Healthbar hp;
     int menu_selected_flag = 0;
     bool gra_w_toku = false;
-
     //STWORZ NAPIS GAMEOVER
     gameOver* end = new gameOver;
     bool czy_zrestartowano = false;
@@ -51,7 +52,6 @@ int main() {
 
     while (window.isOpen())
     {
-
         //OBSLUGA KOLIZJI PRZECIWNIK - PLAYER
         if(menu_selected_flag==1)
         {
@@ -73,7 +73,7 @@ int main() {
                (kolizja(p1, przeciwnik7) == true)||
                (kolizja(p1, przeciwnik8) == true))
             {
-                if(zegar_kolizja.getElapsedTime().asSeconds() > 0.6f)
+                if(zegar_kolizja.getElapsedTime().asSeconds() > 1.0f && dane.zycie > 0)
                 {
                     dane.zycie = dane.zycie - 1;
                     zegar_kolizja.restart();
@@ -84,7 +84,7 @@ int main() {
 
             //OBSLUGA POCISKU
             if (pocisk_flaga == true) {
-                pocisk.move_pocisk(4, p1);
+                pocisk.move_pocisk(8, p1);
                 zegar_pocisk.restart();
             }
 
@@ -149,7 +149,7 @@ int main() {
             {
 
                 //STRZELAJ POCISKIEM
-                if(event.key.code == sf::Keyboard::Space && pocisk.warunek_pocisk() == true && zegar_pocisk.getElapsedTime().asSeconds() > 2.0f){
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && pocisk.warunek_pocisk() == true && zegar_pocisk.getElapsedTime().asSeconds() > 2.0f){
                     pocisk.set_pocisk(p1);
                     pocisk_flaga = true;
                 }
@@ -230,21 +230,21 @@ int main() {
                 //STEROWANIE
                 if(menu_selected_flag == 1)
                 {
-                    if (event.key.code == sf::Keyboard::W)
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
                     {
-                        p1.moveW(0,-20.0f);
+                        p1.moveW(0,-8.0f);
                     }
-                    if (event.key.code == sf::Keyboard::A)
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
                     {
-                        p1.moveA(-15.0f,0);
+                        p1.moveS(0,8.0f);
                     }
-                    if (event.key.code == sf::Keyboard::S)
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
                     {
-                        p1.moveS(0,20.0f);
+                        p1.moveA(-8.0f,0);
                     }
-                    if (event.key.code == sf::Keyboard::D)
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
                     {
-                        p1.moveD(15.0f,0);
+                        p1.moveD(8.0f,0);
                     }
                 }
 
@@ -300,14 +300,14 @@ int main() {
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
                 std::cout << "Wybrano Poziom Trudny"<< std::endl;
                 dane = poziom(1);
-                przeciwnik1->speed(0.8);
-                przeciwnik2->speed(0.8);
-                przeciwnik3->speed(0.8);
-                przeciwnik4->speed(0.8);
-                przeciwnik5->speed(0.8);
-                przeciwnik6->speed(0.8);
-                przeciwnik7->speed(0.8);
-                przeciwnik8->speed(0.8);
+                przeciwnik1->speed(1.2);
+                przeciwnik2->speed(1.2);
+                przeciwnik3->speed(1.2);
+                przeciwnik4->speed(1.2);
+                przeciwnik5->speed(1.2);
+                przeciwnik6->speed(1.2);
+                przeciwnik7->speed(1.2);
+                przeciwnik8->speed(1.2);
                 menu_selected_flag = 0;
             }
         }
@@ -338,8 +338,9 @@ int main() {
         if(menu_selected_flag==1){
             window.draw(background1);
             interfejs->draw(window);
-            interfejs->update("Punkty zycia: " + std::to_string(dane.zycie) + "\n" + "Scores: " + std::to_string(dane.scores));
-
+            interfejs->update("\n Scores: " + std::to_string(dane.scores));
+            window.draw(hp.getHealthbar());
+            hp.update_hp(dane);
             window.draw(p1.getPlayer());
             window.draw(przeciwnik1->getEnemy());
             window.draw(przeciwnik2->getEnemy());
