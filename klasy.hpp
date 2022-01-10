@@ -171,6 +171,7 @@ void Menu::menuglowne(float width, float height) {
     menu[5].setString("Wyjscie");
     menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
+
 void Menu::pomoc(float width, float height){
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
@@ -197,8 +198,8 @@ void Menu::pomoc(float width, float height){
     menu[5].setString("Wyjscie");
     menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
+
 Menu::Menu(float width, float height){
-    max_poziom = 6;
     if (!font.loadFromFile("fonts/vikingfont.ttf"))
     {
         std::cout<<"ER00R"<<std::endl;
@@ -238,7 +239,6 @@ void Menu::draw(sf::RenderWindow &window)
     }
 }
 
-
 void Menu::przesunG()
 {
     if (selectedItem >= 0 && selectedItem < max_poziom)
@@ -250,8 +250,6 @@ void Menu::przesunG()
             selectedItem = max_poziom - 1;
         menu[selectedItem].setStyle(sf::Text::Bold);
     }
-
-
 }
 
 void Menu::przesunD()
@@ -279,7 +277,6 @@ void myDelay(int opoznienie)
             zegar.restart();
             break;
         }
-
     }
 }
 
@@ -289,6 +286,7 @@ void myDelay(int opoznienie)
 typedef struct{
     int zycie;
     int scores;
+    int trudnosc;
 }Gracz;
 
 void zapiszDane(FILE *file, Gracz p)
@@ -305,6 +303,7 @@ void zapiszDane(FILE *file, Gracz p)
     fwrite(&p, sizeof(p), 2, file);
     fclose(file);
 }
+
 Gracz wczytajDane(FILE *file, Gracz dane){
     file = fopen("dane.dat", "rb");
     fseek(file, 0, SEEK_SET);
@@ -316,10 +315,12 @@ Gracz wczytajDane(FILE *file, Gracz dane){
     fclose(file);
     return dane;
 }
+
 Gracz generuj(){
     Gracz dane;
     dane.zycie = 4;
     dane.scores = 0;
+    dane.trudnosc = 2;
     return dane;
 }
 
@@ -369,6 +370,8 @@ void Healthbar::update_hp(Gracz dane) {
     healthbar.setTextureRect(ksztalt);
 }
 
+
+
 //INTERFEJS GRY (PUNTY ZYCIE ITD.)
 class Interfejs{
 protected:
@@ -401,6 +404,7 @@ void Interfejs::inicjuj() {
 void Interfejs::update(const std::string _goraLewy) {
     goraLewy->setString(_goraLewy);
 }
+
 Interfejs::Interfejs(sf::Vector2f _bounds) :bounds(_bounds) {
     this->inicjuj();
 }
@@ -432,7 +436,7 @@ public:
         this->setFillColor(sf::Color::Red);
         this->setStyle(sf::Text::Bold);
         this->rotate(5);
-        this->setString("Game Over!");
+        this->setString("GAME OVER");
     }
 };
 
@@ -500,17 +504,6 @@ void Enemy::speed(float speed){
     vel.y = speed;
 }
 
-//KOLIZJA GRACZA Z PRZECIWNIKIEM
-bool kolizja(Player gracz, Enemy *przeciwnik)
-{
-    if(sqrt((gracz.getPos().x - przeciwnik->getPos().x)*(gracz.getPos().x - przeciwnik->getPos().x)+
-            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<30)
-    {
-        return true;
-    }
-    return false;
-}
-
 
 
 //LOGIKA DZIALANIA POCISKU
@@ -576,11 +569,24 @@ void Pocisk::respawn_pocisk() {
     pocisk.setPosition(position_pocisk);
 }
 
+
+
 //KOLIZJA POCISKU Z PRZECIWNIKIEM
 bool kolizja(Pocisk pocisk, Enemy *przeciwnik) //DO POPRAWY
 {
     if(sqrt((pocisk.getPos_pocisk().x - przeciwnik->getPos().x)*(pocisk.getPos_pocisk().x - przeciwnik->getPos().x)+
             (pocisk.getPos_pocisk().y - przeciwnik->getPos().y)*(pocisk.getPos_pocisk().y - przeciwnik->getPos().y))<30)
+    {
+        return true;
+    }
+    return false;
+}
+
+//KOLIZJA GRACZA Z PRZECIWNIKIEM
+bool kolizja(Player gracz, Enemy *przeciwnik)
+{
+    if(sqrt((gracz.getPos().x - przeciwnik->getPos().x)*(gracz.getPos().x - przeciwnik->getPos().x)+
+            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<30)
     {
         return true;
     }

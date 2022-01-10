@@ -11,11 +11,11 @@ int main() {
     Interfejs* interfejs = new Interfejs(sf::Vector2f(476.0, 476.0));
     Menu menu(window.getSize().x, window.getSize().y);
 
-
     Healthbar hp;
 
     int menu_selected_flag = 0;
     bool gra_w_toku = false;
+
     //STWORZ NAPIS GAMEOVER
     gameOver* end = new gameOver;
     bool czy_zrestartowano = false;
@@ -84,7 +84,7 @@ int main() {
                 }
             }
 
-            //OBSLUGA POCISKU
+            //OBSLUGA DZIALANIA POCISKU
             if (pocisk_flaga == true) {
                 pocisk.move_pocisk(8, p1);
                 zegar_pocisk.restart();
@@ -139,7 +139,6 @@ int main() {
                 pocisk.respawn_pocisk();
                 dane.scores += 10;
             }
-
         }
 
         while (window.pollEvent(event))
@@ -204,6 +203,38 @@ int main() {
                     {
                         std::cout << "Wczytaj zapis..."<< std::endl;
                         dane = wczytajDane(plik, dane);
+
+                        //WCZYTAJ POZIOM TRUDNOSCI
+                        if(dane.trudnosc == 1){
+                            przeciwnik1->speed(0.4);
+                            przeciwnik2->speed(0.4);
+                            przeciwnik3->speed(0.4);
+                            przeciwnik4->speed(0.4);
+                            przeciwnik5->speed(0.4);
+                            przeciwnik6->speed(0.4);
+                            przeciwnik7->speed(0.4);
+                            przeciwnik8->speed(0.4);
+                        }
+                        else if(dane.trudnosc == 2){
+                            przeciwnik1->speed(0.8);
+                            przeciwnik2->speed(0.8);
+                            przeciwnik3->speed(0.8);
+                            przeciwnik4->speed(0.8);
+                            przeciwnik5->speed(0.8);
+                            przeciwnik6->speed(0.8);
+                            przeciwnik7->speed(0.8);
+                            przeciwnik8->speed(0.8);
+                        }
+                        else if(dane.trudnosc == 3){
+                            przeciwnik1->speed(1.2);
+                            przeciwnik2->speed(1.2);
+                            przeciwnik3->speed(1.2);
+                            przeciwnik4->speed(1.2);
+                            przeciwnik5->speed(1.2);
+                            przeciwnik6->speed(1.2);
+                            przeciwnik7->speed(1.2);
+                            przeciwnik8->speed(1.2);
+                        }
                         menu_selected_flag = 1;
                     }
                     if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2)
@@ -229,7 +260,7 @@ int main() {
 
 
 
-                //STEROWANIE
+                //STEROWANIE GRACZEM
                 if(menu_selected_flag == 1)
                 {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -266,12 +297,14 @@ int main() {
 
 
 
-        //WYBOR POZIOMU
-        if(menu_selected_flag == 3){
+        //WYBOR POZIOMU TRUDNOSCI
+        if(menu_selected_flag == 3)
+        {
             menu.poziomtrudnosci(window.getSize().x, window.getSize().y);
             window.clear();
             window.draw(tlo_menu);
             menu.draw(window);
+
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 1) {
                 std::cout << "Wybrano Poziom Latwy"<< std::endl;
                 dane = poziom(4);
@@ -283,9 +316,9 @@ int main() {
                 przeciwnik6->speed(0.4);
                 przeciwnik7->speed(0.4);
                 przeciwnik8->speed(0.4);
+                dane.trudnosc = 1;
                 menu_selected_flag = 0;
             }
-
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 2) {
                 std::cout << "Wybrano Poziom Normalny"<< std::endl;
                 dane = poziom(2);
@@ -297,6 +330,7 @@ int main() {
                 przeciwnik6->speed(0.8);
                 przeciwnik7->speed(0.8);
                 przeciwnik8->speed(0.8);
+                dane.trudnosc = 2;
                 menu_selected_flag = 0;
             }
             if (event.key.code == sf::Keyboard::Enter && menu.getSelectedItem() == 3) {
@@ -310,6 +344,7 @@ int main() {
                 przeciwnik6->speed(1.2);
                 przeciwnik7->speed(1.2);
                 przeciwnik8->speed(1.2);
+                dane.trudnosc = 3;
                 menu_selected_flag = 0;
             }
         }
@@ -366,7 +401,6 @@ int main() {
                 if(zegar_koniec.getElapsedTime().asSeconds() > 2.0f)
                     window.close();
             }
-
         }
 
 
