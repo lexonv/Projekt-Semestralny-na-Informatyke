@@ -53,6 +53,7 @@ int main() {
     //STWORZ POCISK
     Pocisk pocisk(p1);
     bool pocisk_flaga = false;
+    int cooldown = 2;
 
     while (window.isOpen())
     {
@@ -85,7 +86,8 @@ int main() {
             }
 
             //OBSLUGA DZIALANIA POCISKU
-            if (pocisk_flaga == true) {
+            if (pocisk_flaga == true)
+            {
                 pocisk.move_pocisk(8, p1);
                 zegar_pocisk.restart();
             }
@@ -94,6 +96,17 @@ int main() {
             {
                 pocisk.respawn_pocisk();
                 pocisk_flaga = false;
+            }
+
+            //OBSLUGA COOLDOWNU POCISKU
+            if(zegar_pocisk.getElapsedTime().asSeconds() < 1){
+                cooldown = 2;
+            }
+            else if(zegar_pocisk.getElapsedTime().asSeconds() >= 1 && zegar_pocisk.getElapsedTime().asSeconds()< 2){
+                cooldown = 1;
+            }
+            else if(zegar_pocisk.getElapsedTime().asSeconds() >= 2){
+                cooldown = 0;
             }
 
 
@@ -139,6 +152,7 @@ int main() {
                 pocisk.respawn_pocisk();
                 dane.scores += 10;
             }
+
         }
 
         while (window.pollEvent(event))
@@ -156,12 +170,13 @@ int main() {
                 }
 
                 //DEBUG INTERFEJS
-//                if(event.key.code == sf::Keyboard::C){
-//                    dane.zycie = dane.zycie + 1;
-//                }
-//                if(event.key.code == sf::Keyboard::V){
-//                    dane.scores = dane.scores + 10;
-//                }
+                if(menu_selected_flag == 1)
+                {
+//                    if(event.key.code == sf::Keyboard::C)
+//                        dane.zycie = dane.zycie + 1;
+//                    if(event.key.code == sf::Keyboard::V)
+//                        dane.scores = dane.scores + 10;
+                }
 
 
 
@@ -375,7 +390,7 @@ int main() {
         if(menu_selected_flag==1){
             window.draw(background1);
             interfejs->draw(window);
-            interfejs->update("\n Scores: " + std::to_string(dane.scores));
+            interfejs->update("\n Scores: " + std::to_string(dane.scores) + "   Cooldown: " + std::to_string(cooldown) + "s");
             window.draw(hp.getHealthbar());
             hp.update_hp(dane);
             window.draw(p1.getPlayer());

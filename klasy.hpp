@@ -243,7 +243,6 @@ void Menu::przesunG()
 {
     if (selectedItem >= 0 && selectedItem < max_poziom)
     {
-        menu[selectedItem].setFillColor(sf::Color::White);
         menu[selectedItem].setStyle(sf::Text::Regular);
         selectedItem--;
         if (selectedItem < 0)
@@ -256,7 +255,6 @@ void Menu::przesunD()
 {
     if (selectedItem >= 0 && selectedItem < max_poziom)
     {
-        menu[selectedItem].setFillColor(sf::Color::White);
         menu[selectedItem].setStyle(sf::Text::Regular);
         selectedItem++;
         if (selectedItem >= max_poziom)
