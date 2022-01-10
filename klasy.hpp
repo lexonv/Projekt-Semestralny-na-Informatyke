@@ -11,11 +11,11 @@ private:
     sf::Vector2f vel = { 1.1f, 1.1f};
     sf::IntRect ksztalt;
 public:
+    Player(float x, float y);
     void moveW(float x, float y);
     void moveA(float x, float y);
     void moveS(float x, float y);
     void moveD(float x, float y);
-    Player(float x, float y);
     sf::Sprite& getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
 };
@@ -118,6 +118,39 @@ public:
     void menuglowne(float width, float height);
     void poziomtrudnosci(float width, float height);
 };
+
+Menu::Menu(float width, float height){
+    if (!font.loadFromFile("fonts/vikingfont.ttf"))
+    {
+        std::cout<<"ER00R"<<std::endl;
+        return;
+    }
+    menu[0].setFont(font);
+    menu[0].setFillColor(sf::Color::White);
+    menu[0].setString("Graj");
+    menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
+    menu[1].setFont(font);
+    menu[1].setFillColor(sf::Color::White);
+    menu[1].setString("Wczytaj");
+    menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
+    menu[2].setFont(font);
+    menu[2].setFillColor(sf::Color::White);
+    menu[2].setString("Sterowanie");
+    menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
+    menu[3].setFont(font);
+    menu[3].setFillColor(sf::Color::White);
+    menu[3].setString("Zapisz");
+    menu[3].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 4));
+    menu[4].setFont(font);
+    menu[4].setFillColor(sf::Color::White);
+    menu[4].setString("Trudnosc");
+    menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
+    menu[5].setFont(font);
+    menu[5].setFillColor(sf::Color::Red);
+    menu[5].setString("Wyjscie");
+    menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
+}
+
 void Menu::poziomtrudnosci(float width, float height) {
     max_poziom = 4;
     if(selectedItem == 0){
@@ -199,38 +232,6 @@ void Menu::pomoc(float width, float height){
     menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
 }
 
-Menu::Menu(float width, float height){
-    if (!font.loadFromFile("fonts/vikingfont.ttf"))
-    {
-        std::cout<<"ER00R"<<std::endl;
-        return;
-    }
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Graj");
-    menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Wczytaj");
-    menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
-    menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Sterowanie");
-    menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
-    menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("Zapisz");
-    menu[3].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 4));
-    menu[4].setFont(font);
-    menu[4].setFillColor(sf::Color::White);
-    menu[4].setString("Trudnosc");
-    menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
-    menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::Red);
-    menu[5].setString("Wyjscie");
-    menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
-}
-
 void Menu::draw(sf::RenderWindow &window)
 {
     for (int i = 0; i < max_poziom; i++)
@@ -267,7 +268,7 @@ void myDelay(int opoznienie)
 {
     sf::Clock zegar;
     sf::Time czas;
-    while (1)
+    while (true)
     {
         czas = zegar.getElapsedTime();
         if (czas.asMilliseconds() > opoznienie)
@@ -408,8 +409,8 @@ Interfejs::Interfejs(sf::Vector2f _bounds) :bounds(_bounds) {
 }
 
 Interfejs::Interfejs() {
-    this->bounds.x = 460.0;
-    this->bounds.y = 460.0;
+    this->bounds.x = 476.0;
+    this->bounds.y = 476.0;
     this->inicjuj();
 }
 
@@ -513,7 +514,7 @@ private:
     sf::Vector2f vel = {1.0f, 1.0f};
     sf::IntRect ksztalt_pocisk;
 public:
-    Pocisk(Player);
+    explicit Pocisk(Player);
     void move_pocisk(float, Player);
     sf::Sprite& getPocisk(){ return pocisk;};
     void set_pocisk(Player);
@@ -570,7 +571,7 @@ void Pocisk::respawn_pocisk() {
 
 
 //KOLIZJA POCISKU Z PRZECIWNIKIEM
-bool kolizja(Pocisk pocisk, Enemy *przeciwnik) //DO POPRAWY
+bool kolizja(Pocisk pocisk, Enemy *przeciwnik)
 {
     if(sqrt((pocisk.getPos_pocisk().x - przeciwnik->getPos().x)*(pocisk.getPos_pocisk().x - przeciwnik->getPos().x)+
             (pocisk.getPos_pocisk().y - przeciwnik->getPos().y)*(pocisk.getPos_pocisk().y - przeciwnik->getPos().y))<30)

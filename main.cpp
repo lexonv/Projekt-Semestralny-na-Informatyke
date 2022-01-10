@@ -20,6 +20,7 @@ int main() {
     gameOver* end = new gameOver;
     bool czy_zrestartowano = false;
 
+    //ZEGARKI DO KONTROLI MECHANIK
     sf::Clock zegar_kolizja, zegar_koniec, zegar_pocisk;
 
     //STWORZ TLO GRA
@@ -68,7 +69,7 @@ int main() {
             przeciwnik6 -> move(-3.25);
             przeciwnik7 -> move(-3.5);
             przeciwnik8 -> move(-3.3);
-
+            //JEZELI WARUNEK SPELNIONY TO ODEJMIJ JEDNO ZYCIE, ZRESTARTUJ ZEGAR
             if((kolizja(p1, przeciwnik1) == true)||
                (kolizja(p1, przeciwnik2) == true)||
                (kolizja(p1, przeciwnik3) == true)||
@@ -98,7 +99,7 @@ int main() {
                 pocisk_flaga = false;
             }
 
-            //OBSLUGA COOLDOWNU POCISKU
+            //OBSLUGA COOLDOWNU POCISKU W INTERFEJSIE
             if(zegar_pocisk.getElapsedTime().asSeconds() < 1){
                 cooldown = 2;
             }
