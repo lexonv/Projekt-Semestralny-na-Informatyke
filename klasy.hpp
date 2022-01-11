@@ -105,16 +105,16 @@ class Menu
 private:
     sf::Font font;
     sf::Text menu[6];//maksymalna liczba poziomow
-    int selectedItem = 0;
-    int max_poziom = 6;
+    int wybrany_rekord = 0;
+    int maksymalny_poziom = 6;
 
 public:
     Menu(float width, float height);
-    void przesunG();//przesun do gory
-    void przesunD();//przesun w dol
-    int getSelectedItem() { return selectedItem; }//zwroc poziom menu
+    void Up();
+    void Down();
+    int getRekord() { return wybrany_rekord; }
     void draw(sf::RenderWindow &window);
-    void pomoc(float width, float height);
+    void sterowanie(float width, float height);
     void menuglowne(float width, float height);
     void poziomtrudnosci(float width, float height);
 };
@@ -128,139 +128,149 @@ Menu::Menu(float width, float height){
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
     menu[0].setString("Graj");
-    menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
+    menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
+
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Wczytaj");
-    menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
+    menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Sterowanie");
-    menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
+    menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
+
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
     menu[3].setString("Zapisz");
-    menu[3].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 4));
+    menu[3].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 4));
+
     menu[4].setFont(font);
     menu[4].setFillColor(sf::Color::White);
     menu[4].setString("Trudnosc");
-    menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
+    menu[4].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 5));
+
     menu[5].setFont(font);
     menu[5].setFillColor(sf::Color::Red);
     menu[5].setString("Wyjscie");
-    menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
+    menu[5].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 6));
 }
 
 void Menu::poziomtrudnosci(float width, float height) {
-    max_poziom = 4;
-    if(selectedItem == 0){
-        menu[selectedItem]=menu[1];
+    maksymalny_poziom = 4;
+    if(wybrany_rekord == 0){
+        menu[wybrany_rekord]=menu[1];
     }
-    if(selectedItem>3){
-        selectedItem = 0;
+    if(wybrany_rekord>3){
+        wybrany_rekord = 0;
     }
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
     menu[0].setString("Sesja:");
-    menu[0].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 1));
+    menu[0].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 1));
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Zerowa");
-    menu[1].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 2));
+    menu[1].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 2));
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Podstawowa");
-    menu[2].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 3));
+    menu[2].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 3));
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
     menu[3].setString("Poprawkowa");
-    menu[3].setPosition(sf::Vector2f(width / 4, height / (max_poziom + 1) * 4));
+    menu[3].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 4));
 }
 
 void Menu::menuglowne(float width, float height) {
-    max_poziom = 6;
+    maksymalny_poziom = 6;
     menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
     menu[0].setString("Graj");
-    menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
+    menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
+    menu[0].setFillColor(sf::Color::White);
+
     menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Wczytaj");
-    menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
+    menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
+    menu[1].setFillColor(sf::Color::White);
+
     menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Sterowanie");
-    menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
+    menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
+    menu[2].setFillColor(sf::Color::White);
+
     menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
     menu[3].setString("Zapisz");
-    menu[3].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 4));
+    menu[3].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 4));
+    menu[3].setFillColor(sf::Color::White);
+
     menu[4].setFont(font);
-    menu[4].setFillColor(sf::Color::White);
     menu[4].setString("Trudnosc");
-    menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
+    menu[4].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 5));
+    menu[4].setFillColor(sf::Color::White);
+
     menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::Red);
     menu[5].setString("Wyjscie");
-    menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
+    menu[5].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 6));
+    menu[5].setFillColor(sf::Color::Red);
+
 }
 
-void Menu::pomoc(float width, float height){
+void Menu::sterowanie(float width, float height){
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
     menu[0].setString("W - gora");
-    menu[0].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 1));
+    menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("A - lewo");
-    menu[1].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 2));
+    menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("S - dol");
-    menu[2].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 3));
+    menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
     menu[3].setString("D - prawo");
-    menu[3].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 4));
+    menu[3].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 4));
     menu[4].setFont(font);
     menu[4].setFillColor(sf::Color::White);
     menu[4].setString("Spacja - strzal");
-    menu[4].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 5));
+    menu[4].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 5));
     menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::Red);
+    menu[5].setColor(sf::Color::Red);
     menu[5].setString("Wyjscie");
-    menu[5].setPosition(sf::Vector2f(width / 6, height / (max_poziom + 1) * 6));
+    menu[5].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 6));
 }
 
 void Menu::draw(sf::RenderWindow &window)
 {
-    for (int i = 0; i < max_poziom; i++)
+    for (int i = 0; i < maksymalny_poziom; i++)
     {
         window.draw(menu[i]);
     }
 }
 
-void Menu::przesunG()
+void Menu::Up()
 {
-    if (selectedItem >= 0 && selectedItem < max_poziom)
+    if (wybrany_rekord >= 0 && wybrany_rekord < maksymalny_poziom)
     {
-        menu[selectedItem].setStyle(sf::Text::Regular);
-        selectedItem--;
-        if (selectedItem < 0)
-            selectedItem = max_poziom - 1;
-        menu[selectedItem].setStyle(sf::Text::Bold);
+        menu[wybrany_rekord].setStyle(sf::Text::Regular);
+        wybrany_rekord--;
+        if (wybrany_rekord < 0)
+            wybrany_rekord = maksymalny_poziom - 1;
+        menu[wybrany_rekord].setStyle(sf::Text::Bold);
     }
 }
 
-void Menu::przesunD()
+void Menu::Down()
 {
-    if (selectedItem >= 0 && selectedItem < max_poziom)
+    if (wybrany_rekord >= 0 && wybrany_rekord < maksymalny_poziom)
     {
-        menu[selectedItem].setStyle(sf::Text::Regular);
-        selectedItem++;
-        if (selectedItem >= max_poziom)
-            selectedItem = 0;
-        menu[selectedItem].setStyle(sf::Text::Bold);
+        menu[wybrany_rekord].setStyle(sf::Text::Regular);
+        wybrany_rekord++;
+        if (wybrany_rekord >= maksymalny_poziom)
+            wybrany_rekord = 0;
+        menu[wybrany_rekord].setStyle(sf::Text::Bold);
     }
 }
 
@@ -317,20 +327,19 @@ Gracz wczytajDane(FILE *file, Gracz dane){
 
 Gracz generuj(){
     Gracz dane;
-    dane.zycie = 4;
+    dane.zycie = 6;
     dane.scores = 0;
     dane.trudnosc = 2;
     return dane;
 }
 
-Gracz poziom(int hp){
+Gracz poziom(int hp, int trudnosc){
     Gracz dane;
     dane.zycie = hp;
     dane.scores = 0;
+    dane.trudnosc = trudnosc;
     return dane;
 }
-
-
 
 //HEALTHBAR W INTERFEJSIE
 class Healthbar{
@@ -358,10 +367,14 @@ Healthbar::Healthbar() {
 }
 
 void Healthbar::update_hp(Gracz dane) {
-    if(dane.zycie >= 4)
+    if(dane.zycie >= 6)
         ksztalt.top = 895;
-    if(dane.zycie == 3)
+    if(dane.zycie == 5)
+        ksztalt.top = 710;
+    if(dane.zycie == 4)
         ksztalt.top = 525;
+    if(dane.zycie == 3)
+        ksztalt.top = 340;
     if(dane.zycie == 2)
         ksztalt.top = 155;
     if(dane.zycie == 1)
@@ -441,70 +454,6 @@ public:
 
 
 
-//PRZECIWNICY
-class Enemy{
-private:
-    sf::Sprite enemy;
-    sf::IntRect ksztalt_enemy;
-    sf::Texture texture_enemy;
-    sf::Vector2f position_enemy;
-    sf::Vector2f vel = { 0.8f, 0.8f};
-    std::random_device rd;
-public:
-    Enemy();
-    void move(float);
-    sf::Sprite &getEnemy(){ return enemy; }
-    sf::Vector2f getPos() { return enemy.getPosition();}
-    void respawn();
-    void speed(float);
-};
-
-Enemy::Enemy(){
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(300,480);
-    std::uniform_int_distribution<> distY(100,400);
-    position_enemy.x = distX(gen);
-    position_enemy.y = distY(gen);
-    texture_enemy.loadFromFile("textures/szkieletor.png");
-    ksztalt_enemy = sf::IntRect({0, 0, 60, 60});
-    enemy = sf::Sprite (texture_enemy, ksztalt_enemy);
-    enemy.setPosition(position_enemy);
-}
-
-void Enemy::move(float dx){
-
-    sf::Vector2f pos;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(480,500);
-    std::uniform_int_distribution<> distY(50,420);
-    pos.x = dx * vel.x;
-
-    ksztalt_enemy.top = 60;
-    if(ksztalt_enemy.left == 512)
-        ksztalt_enemy.left = 0;
-    else
-        ksztalt_enemy.left += 64;
-    enemy.setTextureRect(ksztalt_enemy);
-    if(getPos().x<=-30){
-        enemy.setPosition(distX(gen), distY(gen));
-    }
-    enemy.move(pos);
-}
-
-void Enemy::respawn(){
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(480,500);
-    std::uniform_int_distribution<> distY(50,420);
-    enemy.setPosition(distX(gen), distY(gen));
-}
-
-void Enemy::speed(float speed){
-    vel.x = speed;
-    vel.y = speed;
-}
-
-
-
 //LOGIKA DZIALANIA POCISKU
 class Pocisk{
 private:
@@ -515,7 +464,7 @@ private:
     sf::IntRect ksztalt_pocisk;
 public:
     explicit Pocisk(Player);
-    void move_pocisk(float, Player);
+    void move_pocisk(float);
     sf::Sprite& getPocisk(){ return pocisk;};
     void set_pocisk(Player);
     bool warunek_pocisk();
@@ -539,7 +488,7 @@ void Pocisk::set_pocisk(Player p) {
     pocisk.setPosition(position_pocisk);
 }
 
-void Pocisk::move_pocisk(float dx, Player p){
+void Pocisk::move_pocisk(float dx){
     sf::Vector2f pos;
     ksztalt_pocisk.top = 0;
     if(ksztalt_pocisk.left == 3072)
@@ -555,11 +504,12 @@ void Pocisk::move_pocisk(float dx, Player p){
 }
 
 bool Pocisk::warunek_pocisk() {
-    if(pocisk.getPosition().x >=480 || pocisk.getPosition().x <= 0){
-        return true;
+    if(pocisk.getPosition().x >=480 || pocisk.getPosition().x <= -10)
+    {
+        return false;
     }
     else
-        return false;
+        return true;
 }
 
 void Pocisk::respawn_pocisk() {
@@ -570,24 +520,167 @@ void Pocisk::respawn_pocisk() {
 
 
 
-//KOLIZJA POCISKU Z PRZECIWNIKIEM
-bool kolizja(Pocisk pocisk, Enemy *przeciwnik)
+//PRZECIWNICY
+class Enemy{
+private:
+    sf::Sprite *enemy;
+    sf::IntRect ksztalt_enemy;
+    sf::Texture texture_enemy;
+    sf::Vector2f vel = { 0.8f, 0.0f};
+    std::random_device rd;
+    int N;
+public:
+    Enemy(int);
+    void move(float);
+    void drawEnemy(sf::RenderWindow &window);
+    bool kolizja_gracz(Player gracz, int Nt);
+    bool kolizja_pocisk(Pocisk pocisk, int Nt);
+    void random_speed();
+};
+
+Enemy::Enemy(int Nt)
 {
-    if(sqrt((pocisk.getPos_pocisk().x - przeciwnik->getPos().x)*(pocisk.getPos_pocisk().x - przeciwnik->getPos().x)+
-            (pocisk.getPos_pocisk().y - przeciwnik->getPos().y)*(pocisk.getPos_pocisk().y - przeciwnik->getPos().y))<30)
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(250,500);
+    std::uniform_int_distribution<> distY(50,450);
+
+    texture_enemy.loadFromFile("textures/szkieletor.png");
+    ksztalt_enemy = sf::IntRect({0, 0, 60, 60});
+    N = Nt;
+    enemy = new sf::Sprite[N];
+    for(int i = 0; i < Nt; i++){
+        enemy[i].setTextureRect(ksztalt_enemy);
+        enemy[i].setTexture(texture_enemy);
+        enemy[i].setPosition(sf::Vector2f(distX(gen),distY(gen)));
+    }
+}
+
+void Enemy::move(float dx)
+{
+    sf::Vector2f pos;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(480,500);
+    std::uniform_int_distribution<> distY(50,420);
+    pos.x = dx * vel.x;
+    ksztalt_enemy.top = 60;
+    if(ksztalt_enemy.left == 512)
+        ksztalt_enemy.left = 0;
+    else
+        ksztalt_enemy.left += 64;
+
+    for(int i = 0; i < N; i++){
+        enemy[i].setTextureRect(ksztalt_enemy);
+        if(enemy[i].getPosition().x<=-30){
+            enemy[i].setPosition(distX(gen), distY(gen));
+        }
+        enemy[i].move(pos);
+    }
+}
+
+void Enemy::drawEnemy(sf::RenderWindow &window)
+{
+    for(int i = 0;i<N;i++){
+        window.draw(enemy[i]);
+    }
+}
+
+
+
+//KOLIZJA POCISKU Z PRZECIWNIKIEM
+
+bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt) {
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(480,500);
+    std::uniform_int_distribution<> distY(50,420);
+    N = Nt;
+    for(int i = 0; i<N; i++)
     {
-        return true;
+        if(sqrt((pocisk.getPos_pocisk().x - enemy[i].getPosition().x)*(pocisk.getPos_pocisk().x - enemy[i].getPosition().x)+
+                (pocisk.getPos_pocisk().y - enemy[i].getPosition().y)*(pocisk.getPos_pocisk().y - enemy[i].getPosition().y))<30)
+        {
+            std::cout<<"Kolizja pocisku z przeciwnik["<<i<<"]"<<std::endl;
+            enemy[i].setPosition(distX(gen), distY(gen));
+            return true;
+        }
     }
     return false;
 }
 
+
+
 //KOLIZJA GRACZA Z PRZECIWNIKIEM
-bool kolizja(Player gracz, Enemy *przeciwnik)
-{
-    if(sqrt((gracz.getPos().x - przeciwnik->getPos().x)*(gracz.getPos().x - przeciwnik->getPos().x)+
-            (gracz.getPos().y - przeciwnik->getPos().y)*(gracz.getPos().y - przeciwnik->getPos().y))<30)
+bool Enemy::kolizja_gracz(Player gracz, int Nt) {
+    for (int i = 0; i < Nt; i++)
     {
-        return true;
+        if (sqrt((gracz.getPos().x - enemy[i].getPosition().x) * (gracz.getPos().x - enemy[i].getPosition().x) +
+                 (gracz.getPos().y - enemy[i].getPosition().y) * (gracz.getPos().y - enemy[i].getPosition().y)) < 20)
+        {
+            std::cout << "Kolizja z przeciwnik[" << i << "]" << std::endl;
+            return true;
+        }
     }
     return false;
+}
+
+//GRAFICZNA OBSLUGA COOLDOWNU POCISKU
+int CD(sf::Clock zegar_pocisk){
+    if(zegar_pocisk.getElapsedTime().asSeconds() < 1){
+        return 2;
+    }
+    else if(zegar_pocisk.getElapsedTime().asSeconds() >= 1 && zegar_pocisk.getElapsedTime().asSeconds()< 2){
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+Player poruszaj_graczem(Player gracz){
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        gracz.moveW(0,-8.0f);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    {
+        gracz.moveS(0,8.0f);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        gracz.moveA(-8.0f,0);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        gracz.moveD(8.0f,0);
+    }
+    return gracz;
+}
+
+Menu poruszaj_menu(Menu menu, sf::Event event){
+    if (event.key.code == sf::Keyboard::Up)
+    {
+        myDelay(100);
+        menu.Up();
+    }
+    else if (event.key.code == sf::Keyboard::Down)
+    {
+        myDelay(100);
+        menu.Down();
+    }
+    return menu;
+}
+
+float wczytaj_trudnosc(Gracz dane)
+{
+    if(dane.trudnosc == 1)
+    {
+        return 1;
+    }
+    else if(dane.trudnosc == 2)
+    {
+        return 2;
+    }
+    else if(dane.trudnosc == 3)
+    {
+        return 3;
+    }
 }
