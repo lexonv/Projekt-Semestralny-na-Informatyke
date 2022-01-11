@@ -5,12 +5,13 @@
 
 
 int main() {
-    sf::Event event;
     sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Sesja egzaminacyjna");
+    sf::Event event;
     window.setFramerateLimit(60);
     Interfejs* interfejs = new Interfejs(sf::Vector2f(476.0, 476.0));
     Menu menu(window.getSize().x, window.getSize().y);
     Healthbar hp;
+    int time = 0;
 
     int trudnosc;
     int tryb_gry = 0;
@@ -21,7 +22,7 @@ int main() {
     bool czy_zrestartowano = false;
 
     //ZEGARKI DO KONTROLI MECHANIK
-    sf::Clock zegar_kolizja, zegar_koniec, zegar_pocisk;
+    sf::Clock zegar_kolizja, zegar_koniec, zegar_pocisk, zegar;
 
     //STWORZ TLO GRA
     sf::Texture background_texture;
@@ -54,6 +55,12 @@ int main() {
     {
         if(tryb_gry==1)
         {
+            //Czas grania
+            if(zegar.getElapsedTime().asSeconds()>1.0f)
+            {
+                time+=1;
+                zegar.restart();
+            }
 
             //OBSLUGA KOLIZJI PRZECIWNIK - PLAYER
             if(przeciwnik.kolizja_gracz(p1, liczba_przeciwnikow) && zegar_kolizja.getElapsedTime().asSeconds() > 1.0f)
@@ -88,13 +95,13 @@ int main() {
                 switch(trudnosc)
                 {
                     case 1:
-                        przeciwnik.move(-1.5);
-                        break;
-                    case 2:
                         przeciwnik.move(-2.5);
                         break;
+                    case 2:
+                        przeciwnik.move(-3.5);
+                        break;
                     case 3:
-                        przeciwnik.move(-4);
+                        przeciwnik.move(-5);
                         break;
                 }
             }
@@ -103,6 +110,7 @@ int main() {
 
 
         ////=========================================================================================================\\\\
+
 
         while (window.pollEvent(event))
         {
@@ -126,10 +134,8 @@ int main() {
                 //STEROWANIE GRACZEM
                 if(tryb_gry == 1)
                 {
-                    p1 = poruszaj_graczem(p1);
+                    p1 = poruszaj_graczem(p1, window);
                 }
-
-
 
 
 
@@ -178,9 +184,7 @@ int main() {
                 }
             }
         }
-
-
-
+        window.clear();
         //WYBOR POZIOMU TRUDNOSCI
         if(tryb_gry == 4)
         {
@@ -254,7 +258,7 @@ int main() {
         {
             window.draw(background1);
             interfejs->draw(window);
-            interfejs->update("\n Punkty: " + std::to_string(dane.scores) + "   Cooldown: " + std::to_string(cooldown) + "s");
+            interfejs->update("                   Czas sesji: "+std::to_string(time)+"s\n Punkty: " + std::to_string(dane.scores) + "   Cooldown: " + std::to_string(cooldown) + "s");
             window.draw(hp.getHealthbar());
             hp.update_hp(dane);
             window.draw(p1.getPlayer());

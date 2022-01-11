@@ -14,8 +14,8 @@ public:
     Player(float x, float y);
     void moveW(float x, float y);
     void moveA(float x, float y);
-    void moveS(float x, float y);
-    void moveD(float x, float y);
+    void moveS(float x, float y, sf::RenderWindow&);
+    void moveD(float x, float y, sf::RenderWindow&);
     sf::Sprite& getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
 };
@@ -62,7 +62,7 @@ void Player::moveA(float xt, float yt){
     gracz.move(pos);
 }
 
-void Player::moveS(float xt, float yt){
+void Player::moveS(float xt, float yt, sf::RenderWindow &window){
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
@@ -73,13 +73,13 @@ void Player::moveS(float xt, float yt){
     else
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
-    if(getPos().y >=400){
+    if(getPos().y >= window.getSize().y - 60.0f){
         pos.y=0;
     }
     gracz.move(pos);
 }
 
-void Player::moveD(float xt, float yt){
+void Player::moveD(float xt, float yt, sf::RenderWindow &window){
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
@@ -90,7 +90,7 @@ void Player::moveD(float xt, float yt){
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
 
-    if(getPos().x >=410){
+    if(getPos().x >=window.getSize().x -50.0f){
         pos.x=0;
     }
     gracz.move(pos);
@@ -167,14 +167,17 @@ void Menu::poziomtrudnosci(float width, float height) {
     menu[0].setFillColor(sf::Color::White);
     menu[0].setString("Sesja:");
     menu[0].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 1));
+
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Zerowa");
     menu[1].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 2));
+
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Podstawowa");
     menu[2].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 3));
+
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
     menu[3].setString("Poprawkowa");
@@ -220,22 +223,27 @@ void Menu::sterowanie(float width, float height){
     menu[0].setFillColor(sf::Color::White);
     menu[0].setString("W - gora");
     menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
+
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("A - lewo");
     menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
+
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("S - dol");
     menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
+
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
     menu[3].setString("D - prawo");
     menu[3].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 4));
+
     menu[4].setFont(font);
     menu[4].setFillColor(sf::Color::White);
     menu[4].setString("Spacja - strzal");
     menu[4].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 5));
+
     menu[5].setFont(font);
     menu[5].setColor(sf::Color::Red);
     menu[5].setString("Wyjscie");
@@ -559,7 +567,7 @@ void Enemy::move(float dx)
 {
     sf::Vector2f pos;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(480,500);
+    std::uniform_int_distribution<> distX(480,600);
     std::uniform_int_distribution<> distY(50,420);
     pos.x = dx * vel.x;
     ksztalt_enemy.top = 60;
@@ -587,7 +595,6 @@ void Enemy::drawEnemy(sf::RenderWindow &window)
 
 
 //KOLIZJA POCISKU Z PRZECIWNIKIEM
-
 bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distX(480,500);
@@ -606,8 +613,6 @@ bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt) {
     return false;
 }
 
-
-
 //KOLIZJA GRACZA Z PRZECIWNIKIEM
 bool Enemy::kolizja_gracz(Player gracz, int Nt) {
     for (int i = 0; i < Nt; i++)
@@ -622,6 +627,10 @@ bool Enemy::kolizja_gracz(Player gracz, int Nt) {
     return false;
 }
 
+
+
+
+
 //GRAFICZNA OBSLUGA COOLDOWNU POCISKU
 int CD(sf::Clock zegar_pocisk){
     if(zegar_pocisk.getElapsedTime().asSeconds() < 1){
@@ -635,14 +644,15 @@ int CD(sf::Clock zegar_pocisk){
     }
 }
 
-Player poruszaj_graczem(Player gracz){
+//PORUSZAJ GRACZEM
+Player poruszaj_graczem(Player gracz, sf::RenderWindow &window){
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
         gracz.moveW(0,-8.0f);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        gracz.moveS(0,8.0f);
+        gracz.moveS(0,8.0f, window);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
@@ -650,11 +660,12 @@ Player poruszaj_graczem(Player gracz){
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        gracz.moveD(8.0f,0);
+        gracz.moveD(8.0f,0, window);
     }
     return gracz;
 }
 
+//PRZEMIESZCZAJ REKORDAMI MENU
 Menu poruszaj_menu(Menu menu, sf::Event event){
     if (event.key.code == sf::Keyboard::Up)
     {
@@ -669,6 +680,7 @@ Menu poruszaj_menu(Menu menu, sf::Event event){
     return menu;
 }
 
+//WCZYTAJ ZAPISANA TRUDNOSC
 float wczytaj_trudnosc(Gracz dane)
 {
     if(dane.trudnosc == 1)
