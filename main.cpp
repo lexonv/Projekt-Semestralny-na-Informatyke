@@ -1,26 +1,23 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+//#include "class/Player.h"
+//#include "class/Menu.h"
+//#include "class/Healthbar.h"
+//#include "class/Interfejs.h"
+//#include "class/gameOver.h"
+//#include "class/Pocisk.h"
+//#include "class/Enemy.h"
+//#include "class/Game.h"
 #include "klasy.hpp"
-//#include "class/Player.cpp"
-//#include "class/Menu.hpp"
-//#include "class/Healthbar.hpp"
-//#include "class/Interfejs.hpp"
-//#include "class/gameOver.hpp"
-//#include "class/Pocisk.hpp"
-//#include "class/Enemy.hpp"
-
-
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Sesja egzaminacyjna");
-    sf::Event event;
+    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Projekt");
     window.setFramerateLimit(60);
     Interfejs* interfejs = new Interfejs(true);
     Menu menu(window.getSize().x, window.getSize().y);
-    Healthbar hp;
+    Healthbar hp(20.0f, 0.0f);
 
-    int time = 0;
     int trudnosc;
     int tryb_gry = 0;
     bool gra_w_toku = false;
@@ -31,18 +28,11 @@ int main() {
     bool czy_zrestartowano = false;
 
     //ZEGARKI DO KONTROLI MECHANIK
-    sf::Clock zegar_kolizja, zegar_koniec, zegar_pocisk, zegar;
+    sf::Clock zegar_kolizja, zegar_koniec, zegar_cooldown, zegar;
 
-    //STWORZ TLO GRA
-    sf::Texture background_texture;
-    sf::IntRect background(0,0,476.0,476.0);
-    background_texture.loadFromFile("textures/background1.png");
-    sf::Sprite background1(background_texture, background);
-
-    //STWORZ TLO MENU
-    sf::Texture tlo_menu_texture;
-    tlo_menu_texture.loadFromFile("textures/pg.jpeg");
-    sf::Sprite tlo_menu(tlo_menu_texture, background);
+    //STWORZ TLO GRY
+    Background tlo_gra(window.getSize().x, window.getSize().y, true);
+    Background tlo_menu(window.getSize().x, window.getSize().y, false);
 
     //STWORZ DANE
     Gracz dane;
@@ -52,74 +42,51 @@ int main() {
     Player p1(50.0, 200.0);
 
     //STWORZ N PRZECIWNIKOW
-    int liczba_przeciwnikow = 10;
+    int liczba_przeciwnikow = 16;
     Enemy przeciwnik(liczba_przeciwnikow);
 
     //STWORZ POCISK
-    Pocisk pocisk(p1);
-    int cooldown = 2;
+    auto *pocisk = new Pocisk();
+    int cooldown_pocisku = 2;
     bool flaga_pocisk= false;
 
     while (window.isOpen())
     {
-
+        sf::Event event;
         if(tryb_gry==1)
         {
             //CZAS DANEJ SESJI
-            if(zegar.getElapsedTime().asSeconds()>1.0f)
+            if(zegar.getElapsedTime().asSeconds()>=1.0f)
             {
-                time+=1;
-                dane.czas = time;
+                dane.czas += 1;
                 zegar.restart();
             }
+            //OBSLUGA COOLDOWNU POCISKU W INTERFEJSIE
+            cooldown_pocisku = CD(zegar_cooldown);
 
             //STEROWANIE GRACZEM
             p1 = poruszaj_graczem(p1, window, 1.5f);
 
             //OBSLUGA KOLIZJI PRZECIWNIK - PLAYER
-            if(przeciwnik.kolizja_gracz(p1, liczba_przeciwnikow) && zegar_kolizja.getElapsedTime().asSeconds() > 1.0f)
-            {
+            if(przeciwnik.kolizja_gracz(p1, liczba_przeciwnikow) && zegar_kolizja.getElapsedTime().asSeconds() > 1.0f){
                 dane.zycie -= 1;
                 zegar_kolizja.restart();
             }
 
-            //OBSLUGA KOLIZJI POCISK - PRZECIWNIK
-            if(przeciwnik.kolizja_pocisk(pocisk, liczba_przeciwnikow)){
+            //OBSLUGA POCISKU oraz KOLIZJI PRZECIWNIK - POCISK
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && zegar_cooldown.getElapsedTime().asSeconds() > 2.0f){
+                pocisk->set_pocisk(p1);
+                flaga_pocisk = true;
+                zegar_cooldown.restart();
+            }
+            obsluga_pocisku(zegar_cooldown, pocisk, p1, flaga_pocisk, &przeciwnik);
+            if(przeciwnik.kolizja_pocisk(*pocisk, liczba_przeciwnikow)){
                 dane.scores += 1;
-                pocisk.respawn_pocisk();
-            }
-
-            //OBSLUGA COOLDOWNU POCISKU W INTERFEJSIE
-            cooldown = CD(zegar_pocisk);
-
-            //OBSLUGA POCISKU
-            if(flaga_pocisk && pocisk.warunek_pocisk()){
-                pocisk.move_pocisk(8.0f);
-                zegar_pocisk.restart();
-            }
-            else if(pocisk.warunek_pocisk() && flaga_pocisk)
-            {
-                flaga_pocisk = false;
-                pocisk.respawn_pocisk();
+                pocisk->respawn_pocisk();
             }
 
             //OBSLUGA POZIOMU TRUDNOSCI
-                switch(trudnosc)
-                {
-                    case 1:
-                        przeciwnik.move(-3);
-                        break;
-                    case 2:
-                        przeciwnik.move(-4);
-                        break;
-                    case 3:
-                        przeciwnik.move(-6);
-                        break;
-                    default:
-                        przeciwnik.move(-4);
-                        break;
-
-                }
+            obsluga_trudnosci(&przeciwnik, trudnosc);
         }
 
 
@@ -133,12 +100,6 @@ int main() {
 
             if (event.type == sf::Event::KeyPressed)
             {
-                //STRZELAJ POCISKIEM - USTAW FLAGE
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && zegar_pocisk.getElapsedTime().asSeconds() > 2.0f)
-                {
-                    pocisk.set_pocisk(p1);
-                    flaga_pocisk = true;
-                }
 
                 //PRZESUWAJ SIĘ PO REKORDACH MENU
                 menu = poruszaj_menu(menu, event);
@@ -165,7 +126,7 @@ int main() {
                             break;
                         case 1:
                             dane = wczytajDane(plik, dane);
-                            trudnosc = wczytaj_trudnosc(dane);
+                            trudnosc = dane.trudnosc;
                             tryb_gry = 1;
                             break;
                         case 2:
@@ -190,7 +151,7 @@ int main() {
         {
             menu.potwierdzenie(window.getSize().x, window.getSize().y);
             window.clear();
-            window.draw(tlo_menu);
+            tlo_menu.draw(window);
             menu.draw(window);
             if(event.key.code == sf::Keyboard::Enter)
             {
@@ -211,7 +172,7 @@ int main() {
         {
             menu.poziomtrudnosci(window.getSize().x, window.getSize().y);
             window.clear();
-            window.draw(tlo_menu);
+            tlo_menu.draw(window);
             menu.draw(window);
 
             if (event.key.code == sf::Keyboard::Enter && menu.getRekord() == 1)
@@ -253,16 +214,17 @@ int main() {
 
 
         //START GRY
-        if((tryb_gry==1 || czy_otwarto_sterowanie) && gra_w_toku)
+        if(tryb_gry==1 || czy_otwarto_sterowanie)
         {
-            window.draw(background1);
-            interfejs->draw(window);
-            interfejs->update("\nPunkty: " + std::to_string(dane.scores),"Czas sesji: "+std::to_string(time)+"s\n" + "Cooldown: " + std::to_string(cooldown) + "s");
+            tlo_gra.draw(window);
+            interfejs->rysuj_interfejs(window);
+            interfejs->update("\nPunkty: " + std::to_string(dane.scores),"Czas sesji: "+std::to_string(dane.czas)+"s\n" + "Cooldown: " + std::to_string(cooldown_pocisku) + "s");
             window.draw(hp.getHealthbar());
             hp.update_hp(dane);
             window.draw(p1.getPlayer());
             przeciwnik.drawEnemy(window);
-            window.draw(pocisk.getPocisk());
+            if(flaga_pocisk)
+                window.draw(pocisk->getPocisk());
 
             //WARUNEK KONCA GRY #GAME_OVER
             if(dane.zycie <= 0)
@@ -274,7 +236,14 @@ int main() {
                 }
                 window.draw(*end);
                 if(zegar_koniec.getElapsedTime().asSeconds() > 2.0f)
-                    window.close();
+                {
+                    tryb_gry = 0;
+                    gra_w_toku = false;
+                    dane = generuj();
+                    trudnosc = dane.trudnosc;
+                    przeciwnik.restart();
+                    czy_zrestartowano = false;
+                }
             }
         }
 
@@ -299,12 +268,13 @@ int main() {
                 czy_otwarto_sterowanie = false;
                 tryb_gry = 0;
             }
+
         }
         //POKAZ MENU GLOWNE
         if(tryb_gry==0)
         {
             window.clear();
-            window.draw(tlo_menu);
+            tlo_menu.draw(window);
             menu.menuglowne(window.getSize().x, window.getSize().y);
             menu.draw(window);
         }

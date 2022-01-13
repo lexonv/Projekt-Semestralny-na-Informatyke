@@ -317,9 +317,9 @@ Gracz wczytajDane(FILE *file, Gracz dane){
 
 Gracz generuj(){
     Gracz dane;
-    dane.zycie = 6;
+    dane.zycie = 3;
     dane.scores = 0;
-    dane.trudnosc = 1;
+    dane.trudnosc = 2;
     dane.czas = 0;
     return dane;
 }
@@ -329,6 +329,7 @@ Gracz poziom(int hp, int trudnosc){
     dane.zycie = hp;
     dane.scores = 0;
     dane.trudnosc = trudnosc;
+    dane.czas = 0;
     return dane;
 }
 
@@ -341,18 +342,18 @@ private:
     sf::Vector2f pozycja;
 
 public:
-    Healthbar();
+    Healthbar(float, float);
     sf::Sprite& getHealthbar(){return healthbar;}
     void update_hp(Gracz);
 };
 
-Healthbar::Healthbar() {
+Healthbar::Healthbar(float dx, float dy) {
     tekstura.loadFromFile("textures/healthbar.png");
     ksztalt = sf::IntRect({0,0,630,179});
     healthbar.setTexture(tekstura);
     healthbar = sf::Sprite(tekstura, ksztalt);
-    pozycja.x = 20.0f;
-    pozycja.y = 0.0f;
+    pozycja.x = dx;
+    pozycja.y = dy;
     healthbar.setScale(0.18f, 0.18f);
     healthbar.setPosition(pozycja);
 }
@@ -390,7 +391,7 @@ private:
 public:
     Interfejs(bool);
     void rysuj_opcje(sf::RenderWindow& _okno);
-    void draw(sf::RenderWindow& _okno);
+    void rysuj_interfejs(sf::RenderWindow& _okno);
     void update(std::string, std::string);
 };
 
@@ -449,7 +450,7 @@ Interfejs::Interfejs(bool flaga)
         this->inicjuj_sterowanie();
 }
 
-void Interfejs::draw(sf::RenderWindow& okno)
+void Interfejs::rysuj_interfejs(sf::RenderWindow& okno)
 {
     okno.draw(*UpperLeft);
     okno.draw(*UpperRight);
@@ -487,35 +488,35 @@ public:
 //LOGIKA DZIALANIA POCISKU
 class Pocisk{
 private:
-    sf::Sprite pocisk;
+    sf::Sprite *pocisk;
     sf::Texture tekstura_pocisk;
     sf::Vector2f position_pocisk;
     sf::Vector2f vel = {1.0f, 1.0f};
     sf::IntRect ksztalt_pocisk;
 public:
-    explicit Pocisk(Player);
+    explicit Pocisk();
     void move_pocisk(float);
-    sf::Sprite& getPocisk(){ return pocisk;};
+    sf::Sprite& getPocisk(){ return *pocisk;};
     void set_pocisk(Player);
     bool warunek_pocisk();
-    sf::Vector2f getPos_pocisk() { return pocisk.getPosition(); }
+    sf::Vector2f getPos_pocisk() { return pocisk->getPosition(); }
     void respawn_pocisk();
 };
 
-Pocisk::Pocisk(Player p){
+Pocisk::Pocisk(){
     tekstura_pocisk.loadFromFile("textures/fireball.png");
     ksztalt_pocisk = sf::IntRect({0, 0, 512, 512});
     position_pocisk.x = -100.0f;
     position_pocisk.y = -50.0f;
-    pocisk = sf::Sprite (tekstura_pocisk, ksztalt_pocisk);
-    pocisk.setPosition(position_pocisk);
-    pocisk.setScale(0.2f, 0.2f);
+    pocisk = new sf::Sprite(tekstura_pocisk, ksztalt_pocisk);
+    pocisk->setPosition(position_pocisk);
+    pocisk->setScale(0.2f, 0.2f);
 }
 
 void Pocisk::set_pocisk(Player p) {
     position_pocisk.x = p.getPos().x;
     position_pocisk.y = p.getPos().y;
-    pocisk.setPosition(position_pocisk);
+    pocisk->setPosition(position_pocisk);
 }
 
 void Pocisk::move_pocisk(float dx){
@@ -525,16 +526,16 @@ void Pocisk::move_pocisk(float dx){
         ksztalt_pocisk.left = 0;
     else
         ksztalt_pocisk.left += 512;
-    pocisk.setTextureRect(ksztalt_pocisk);
+    pocisk->setTextureRect(ksztalt_pocisk);
 
     if(position_pocisk.x<=480){
         pos.x = dx * vel.x;
-        pocisk.move(pos);
+        pocisk->move(pos);
     }
 }
 
 bool Pocisk::warunek_pocisk() {
-    if(pocisk.getPosition().x >=480 || pocisk.getPosition().x <= -10)
+    if(pocisk->getPosition().x >=480 || pocisk->getPosition().x <= -10)
     {
         return false;
     }
@@ -545,7 +546,7 @@ bool Pocisk::warunek_pocisk() {
 void Pocisk::respawn_pocisk() {
     position_pocisk.x = -100.0f;
     position_pocisk.y = -50.0f;
-    pocisk.setPosition(position_pocisk);
+    pocisk->setPosition(position_pocisk);
 }
 
 
@@ -565,6 +566,7 @@ public:
     void drawEnemy(sf::RenderWindow &window);
     bool kolizja_gracz(Player gracz, int Nt);
     bool kolizja_pocisk(Pocisk pocisk, int Nt);
+    void restart();
 };
 
 Enemy::Enemy(int Nt)
@@ -642,11 +644,52 @@ bool Enemy::kolizja_gracz(Player gracz, int Nt){
         if (sqrt((gracz.getPos().x - enemy[i].getPosition().x) * (gracz.getPos().x - enemy[i].getPosition().x) +
                  (gracz.getPos().y - enemy[i].getPosition().y) * (gracz.getPos().y - enemy[i].getPosition().y)) < 20)
         {
-            std::cout << "Kolizja z przeciwnik[" << i << "]" << std::endl;
+            std::cout << "Kolizja gracza z przeciwnik[" << i << "]" << std::endl;
             return true;
         }
     }
     return false;
+}
+
+void Enemy::restart() {
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(200,500);
+    std::uniform_int_distribution<> distY(50,450);
+    for(int i = 0;i<N;i++)
+    {
+        enemy[i].setPosition(sf::Vector2f(distX(gen),distY(gen)));
+    }
+}
+
+
+
+//CREATE BACKGROUND
+class Background{
+private:
+    sf::Texture texture;
+    sf::IntRect size;
+    sf::Sprite background;
+public:
+    Background(int height, int width, bool flaga);
+    void draw(sf::RenderWindow &window);
+};
+
+Background::Background(int height, int width, bool flaga)
+{
+    size = sf::IntRect({0,0,width,height});
+    if(flaga)
+    {
+        texture.loadFromFile("textures/background1.png");
+    }
+    else
+    {
+        texture.loadFromFile("textures/pg.jpeg");
+    }
+    background = sf::Sprite(texture, size);
+};
+
+void Background::draw(sf::RenderWindow &window){
+    window.draw(background);
 }
 
 
@@ -706,23 +749,38 @@ Menu poruszaj_menu(Menu menu, sf::Event event)
     return menu;
 }
 
-//WCZYTAJ ZAPISANA TRUDNOSC
-float wczytaj_trudnosc(Gracz dane)
+void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc)
 {
-    if(dane.trudnosc == 1)
+    switch(trudnosc)
     {
-        return 1;
+        case 1:
+            przeciwnik->move(-4);
+            break;
+        case 2:
+            przeciwnik->move(-5);
+            break;
+        case 3:
+            przeciwnik->move(-6);
+            break;
+        default:
+            przeciwnik->move(-5);
+            break;
     }
-    else if(dane.trudnosc == 2)
+}
+
+void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, Player p1, bool flaga_pocisk, Enemy *przeciwnik){
+    if(flaga_pocisk)
     {
-        return 2;
-    }
-    else if(dane.trudnosc == 3)
-    {
-        return 3;
-    }
-    else
-    {
-     return 1;
+        //OBSLUGA POCISKU
+        if(pocisk->warunek_pocisk())
+        {
+            pocisk->move_pocisk(8.0f);
+            zegar_cooldown.restart();
+        }
+        else
+        {
+            flaga_pocisk = false;
+            pocisk->respawn_pocisk();
+        }
     }
 }
