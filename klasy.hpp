@@ -73,6 +73,7 @@ void Player::moveS(float xt, float yt, sf::RenderWindow &window){
     else
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
+
     if(getPos().y >= window.getSize().y - 60.0f){
         pos.y=0;
     }
@@ -304,6 +305,7 @@ typedef struct{
     int zycie;
     int scores;
     int trudnosc;
+    int czas;
 }Gracz;
 
 void zapiszDane(FILE *file, Gracz p)
@@ -338,6 +340,7 @@ Gracz generuj(){
     dane.zycie = 6;
     dane.scores = 0;
     dane.trudnosc = 2;
+    dane.czas = 0;
     return dane;
 }
 
@@ -549,14 +552,15 @@ public:
 Enemy::Enemy(int Nt)
 {
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(250,500);
+    std::uniform_int_distribution<> distX(200,500);
     std::uniform_int_distribution<> distY(50,450);
 
     texture_enemy.loadFromFile("textures/szkieletor.png");
     ksztalt_enemy = sf::IntRect({0, 0, 60, 60});
     N = Nt;
     enemy = new sf::Sprite[N];
-    for(int i = 0; i < Nt; i++){
+    for(int i = 0; i < Nt; i++)
+    {
         enemy[i].setTextureRect(ksztalt_enemy);
         enemy[i].setTexture(texture_enemy);
         enemy[i].setPosition(sf::Vector2f(distX(gen),distY(gen)));
@@ -595,7 +599,7 @@ void Enemy::drawEnemy(sf::RenderWindow &window)
 
 
 //KOLIZJA POCISKU Z PRZECIWNIKIEM
-bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt) {
+bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt){
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distX(480,500);
     std::uniform_int_distribution<> distY(50,420);
@@ -603,7 +607,7 @@ bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt) {
     for(int i = 0; i<N; i++)
     {
         if(sqrt((pocisk.getPos_pocisk().x - enemy[i].getPosition().x)*(pocisk.getPos_pocisk().x - enemy[i].getPosition().x)+
-                (pocisk.getPos_pocisk().y - enemy[i].getPosition().y)*(pocisk.getPos_pocisk().y - enemy[i].getPosition().y))<30)
+                (pocisk.getPos_pocisk().y - enemy[i].getPosition().y)*(pocisk.getPos_pocisk().y - enemy[i].getPosition().y))<20)
         {
             std::cout<<"Kolizja pocisku z przeciwnik["<<i<<"]"<<std::endl;
             enemy[i].setPosition(distX(gen), distY(gen));
@@ -614,7 +618,7 @@ bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt) {
 }
 
 //KOLIZJA GRACZA Z PRZECIWNIKIEM
-bool Enemy::kolizja_gracz(Player gracz, int Nt) {
+bool Enemy::kolizja_gracz(Player gracz, int Nt){
     for (int i = 0; i < Nt; i++)
     {
         if (sqrt((gracz.getPos().x - enemy[i].getPosition().x) * (gracz.getPos().x - enemy[i].getPosition().x) +
@@ -632,8 +636,10 @@ bool Enemy::kolizja_gracz(Player gracz, int Nt) {
 
 
 //GRAFICZNA OBSLUGA COOLDOWNU POCISKU
-int CD(sf::Clock zegar_pocisk){
-    if(zegar_pocisk.getElapsedTime().asSeconds() < 1){
+int CD(sf::Clock zegar_pocisk)
+{
+    if(zegar_pocisk.getElapsedTime().asSeconds() < 1)
+    {
         return 2;
     }
     else if(zegar_pocisk.getElapsedTime().asSeconds() >= 1 && zegar_pocisk.getElapsedTime().asSeconds()< 2){
@@ -645,28 +651,30 @@ int CD(sf::Clock zegar_pocisk){
 }
 
 //PORUSZAJ GRACZEM
-Player poruszaj_graczem(Player gracz, sf::RenderWindow &window){
+Player poruszaj_graczem(Player gracz, sf::RenderWindow &window, float dir)
+{
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        gracz.moveW(0,-8.0f);
+        gracz.moveW(0,-dir);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        gracz.moveS(0,8.0f, window);
+        gracz.moveS(0,dir, window);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        gracz.moveA(-8.0f,0);
+        gracz.moveA(-dir,0);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        gracz.moveD(8.0f,0, window);
+        gracz.moveD(dir,0, window);
     }
     return gracz;
 }
 
 //PRZEMIESZCZAJ REKORDAMI MENU
-Menu poruszaj_menu(Menu menu, sf::Event event){
+Menu poruszaj_menu(Menu menu, sf::Event event)
+{
     if (event.key.code == sf::Keyboard::Up)
     {
         myDelay(100);

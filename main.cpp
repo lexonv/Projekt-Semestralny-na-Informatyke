@@ -43,7 +43,7 @@ int main() {
     Player p1(50.0, 200.0);
 
     //STWORZ N PRZECIWNIKOW
-    int liczba_przeciwnikow = 12;
+    int liczba_przeciwnikow = 10;
     Enemy przeciwnik(liczba_przeciwnikow);
 
     //STWORZ POCISK
@@ -53,14 +53,19 @@ int main() {
 
     while (window.isOpen())
     {
+
         if(tryb_gry==1)
         {
             //Czas grania
             if(zegar.getElapsedTime().asSeconds()>1.0f)
             {
                 time+=1;
+                dane.czas = time;
                 zegar.restart();
             }
+
+            //STEROWANIE GRACZEM
+            p1 = poruszaj_graczem(p1, window, 1.5f);
 
             //OBSLUGA KOLIZJI PRZECIWNIK - PLAYER
             if(przeciwnik.kolizja_gracz(p1, liczba_przeciwnikow) && zegar_kolizja.getElapsedTime().asSeconds() > 1.0f)
@@ -95,13 +100,13 @@ int main() {
                 switch(trudnosc)
                 {
                     case 1:
-                        przeciwnik.move(-2.5);
+                        przeciwnik.move(-3);
                         break;
                     case 2:
-                        przeciwnik.move(-3.5);
+                        przeciwnik.move(-4);
                         break;
                     case 3:
-                        przeciwnik.move(-5);
+                        przeciwnik.move(-6);
                         break;
                 }
             }
@@ -119,25 +124,12 @@ int main() {
 
             if (event.type == sf::Event::KeyPressed)
             {
-
-
-
-
-
                 //STRZELAJ POCISKIEM - USTAW FLAGE
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && zegar_pocisk.getElapsedTime().asSeconds() > 2.0f)
                 {
                     pocisk.set_pocisk(p1);
                     flaga_pocisk = true;
                 }
-
-                //STEROWANIE GRACZEM
-                if(tryb_gry == 1)
-                {
-                    p1 = poruszaj_graczem(p1, window);
-                }
-
-
 
                 //PRZESUWAJ SIĘ PO REKORDACH MENU
                 menu = poruszaj_menu(menu, event);
