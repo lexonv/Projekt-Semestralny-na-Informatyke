@@ -2,20 +2,29 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "klasy.hpp"
+//#include "class/Player.cpp"
+//#include "class/Menu.hpp"
+//#include "class/Healthbar.hpp"
+//#include "class/Interfejs.hpp"
+//#include "class/gameOver.hpp"
+//#include "class/Pocisk.hpp"
+//#include "class/Enemy.hpp"
+
 
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Sesja egzaminacyjna");
     sf::Event event;
     window.setFramerateLimit(60);
-    Interfejs* interfejs = new Interfejs(sf::Vector2f(476.0, 476.0));
+    Interfejs* interfejs = new Interfejs(true);
     Menu menu(window.getSize().x, window.getSize().y);
     Healthbar hp;
-    int time = 0;
 
+    int time = 0;
     int trudnosc;
     int tryb_gry = 0;
     bool gra_w_toku = false;
+    bool czy_otwarto_sterowanie = false;
 
     //STWORZ NAPIS GAMEOVER
     gameOver* end = new gameOver;
@@ -56,7 +65,7 @@ int main() {
 
         if(tryb_gry==1)
         {
-            //Czas grania
+            //CZAS DANEJ SESJI
             if(zegar.getElapsedTime().asSeconds()>1.0f)
             {
                 time+=1;
@@ -75,7 +84,7 @@ int main() {
             }
 
             //OBSLUGA KOLIZJI POCISK - PRZECIWNIK
-            if(przeciwnik.kolizja_pocisk(pocisk, liczba_przeciwnikow) == true){
+            if(przeciwnik.kolizja_pocisk(pocisk, liczba_przeciwnikow)){
                 dane.scores += 1;
                 pocisk.respawn_pocisk();
             }
@@ -84,19 +93,17 @@ int main() {
             cooldown = CD(zegar_pocisk);
 
             //OBSLUGA POCISKU
-            if(flaga_pocisk == true && pocisk.warunek_pocisk() == true){
-                pocisk.move_pocisk(8);
+            if(flaga_pocisk && pocisk.warunek_pocisk()){
+                pocisk.move_pocisk(8.0f);
                 zegar_pocisk.restart();
             }
-            else if(pocisk.warunek_pocisk() == false && flaga_pocisk == true)
+            else if(pocisk.warunek_pocisk() && flaga_pocisk)
             {
                 flaga_pocisk = false;
                 pocisk.respawn_pocisk();
             }
 
             //OBSLUGA POZIOMU TRUDNOSCI
-            if(gra_w_toku = true)
-            {
                 switch(trudnosc)
                 {
                     case 1:
@@ -108,9 +115,11 @@ int main() {
                     case 3:
                         przeciwnik.move(-6);
                         break;
-                }
-            }
+                    default:
+                        przeciwnik.move(-4);
+                        break;
 
+                }
         }
 
 
@@ -170,13 +179,33 @@ int main() {
                             tryb_gry = 4;
                             break;
                         case 5:
-                            window.close();
+                            tryb_gry = 5;
                             break;
                     }
                 }
             }
         }
         window.clear();
+        if(tryb_gry == 5)
+        {
+            menu.potwierdzenie(window.getSize().x, window.getSize().y);
+            window.clear();
+            window.draw(tlo_menu);
+            menu.draw(window);
+            if(event.key.code == sf::Keyboard::Enter)
+            {
+                switch (menu.getRekord())
+                {
+                    case 1:
+                        window.close();
+                        break;
+                    case 2:
+                        tryb_gry = 0;
+                        break;
+                }
+            }
+        }
+
         //WYBOR POZIOMU TRUDNOSCI
         if(tryb_gry == 4)
         {
@@ -223,46 +252,22 @@ int main() {
 
 
 
-        //POKAZ STEROWANIE
-        if(tryb_gry == 2)
-        {
-            menu.sterowanie(window.getSize().x, window.getSize().y);
-            window.clear();
-            window.draw(tlo_menu);
-            menu.draw(window);
-            if ((event.key.code == sf::Keyboard::Enter && menu.getRekord() == 5 && gra_w_toku == true)
-                || (event.key.code == sf::Keyboard::Escape && gra_w_toku == true))
-            {
-                tryb_gry = 1;
-            }
-
-            if ((event.key.code == sf::Keyboard::Enter && menu.getRekord() == 5 && gra_w_toku == false)
-                || (event.key.code == sf::Keyboard::Escape && gra_w_toku == false))
-            {
-                tryb_gry = 0;
-            }
-        }
-
-
-
         //START GRY
-        if(tryb_gry==1)
+        if((tryb_gry==1 || czy_otwarto_sterowanie) && gra_w_toku)
         {
             window.draw(background1);
             interfejs->draw(window);
-            interfejs->update("                   Czas sesji: "+std::to_string(time)+"s\n Punkty: " + std::to_string(dane.scores) + "   Cooldown: " + std::to_string(cooldown) + "s");
+            interfejs->update("\nPunkty: " + std::to_string(dane.scores),"Czas sesji: "+std::to_string(time)+"s\n" + "Cooldown: " + std::to_string(cooldown) + "s");
             window.draw(hp.getHealthbar());
             hp.update_hp(dane);
             window.draw(p1.getPlayer());
             przeciwnik.drawEnemy(window);
             window.draw(pocisk.getPocisk());
 
-
-
             //WARUNEK KONCA GRY #GAME_OVER
             if(dane.zycie <= 0)
             {
-                if(czy_zrestartowano == false)
+                if(!czy_zrestartowano)
                 {
                     zegar_koniec.restart();
                     czy_zrestartowano = true;
@@ -275,6 +280,26 @@ int main() {
 
 
 
+        //POKAZ STEROWANIE
+        if(tryb_gry == 2)
+        {
+            Interfejs* opcje = new Interfejs(false);
+            opcje->rysuj_opcje(window);
+            czy_otwarto_sterowanie = true;
+            if (event.key.code == sf::Keyboard::Escape && gra_w_toku)
+            {
+                delete opcje;
+                czy_otwarto_sterowanie = false;
+                tryb_gry = 1;
+            }
+
+            if (event.key.code == sf::Keyboard::Escape && !gra_w_toku)
+            {
+                delete opcje;
+                czy_otwarto_sterowanie = false;
+                tryb_gry = 0;
+            }
+        }
         //POKAZ MENU GLOWNE
         if(tryb_gry==0)
         {

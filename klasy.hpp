@@ -11,6 +11,7 @@ private:
     sf::Vector2f vel = { 1.1f, 1.1f};
     sf::IntRect ksztalt;
 public:
+    Player();
     Player(float x, float y);
     void moveW(float x, float y);
     void moveA(float x, float y);
@@ -19,6 +20,15 @@ public:
     sf::Sprite& getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
 };
+
+Player::Player(){
+    position.x = 100;
+    position.y = 100;
+    tekstura.loadFromFile("textures/profesor.png");
+    ksztalt = sf::IntRect({0, 0, 64, 64});
+    gracz = sf::Sprite (tekstura, ksztalt);
+    gracz.setPosition(position);
+}
 
 Player::Player(float xt, float yt){
     position.x = xt;
@@ -115,9 +125,9 @@ public:
     void Down();
     int getRekord() { return wybrany_rekord; }
     void draw(sf::RenderWindow &window);
-    void sterowanie(float width, float height);
     void menuglowne(float width, float height);
     void poziomtrudnosci(float width, float height);
+    void potwierdzenie(float width, float height);
 };
 
 Menu::Menu(float width, float height){
@@ -126,34 +136,7 @@ Menu::Menu(float width, float height){
         std::cout<<"ER00R"<<std::endl;
         return;
     }
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Graj");
-    menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
-
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Wczytaj");
-    menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
-    menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Sterowanie");
-    menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
-
-    menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("Zapisz");
-    menu[3].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 4));
-
-    menu[4].setFont(font);
-    menu[4].setFillColor(sf::Color::White);
-    menu[4].setString("Trudnosc");
-    menu[4].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 5));
-
-    menu[5].setFont(font);
-    menu[5].setFillColor(sf::Color::Red);
-    menu[5].setString("Wyjscie");
-    menu[5].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 6));
+    this->menuglowne(width, height);
 }
 
 void Menu::poziomtrudnosci(float width, float height) {
@@ -166,22 +149,22 @@ void Menu::poziomtrudnosci(float width, float height) {
     }
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Sesja:");
+    menu[0].setString("Poziom:");
     menu[0].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 1));
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Zerowa");
+    menu[1].setString("Latwy");
     menu[1].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 2));
 
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Podstawowa");
+    menu[2].setString("Normalny");
     menu[2].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 3));
 
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("Poprawkowa");
+    menu[3].setString("Trudny");
     menu[3].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 4));
 }
 
@@ -219,36 +202,29 @@ void Menu::menuglowne(float width, float height) {
 
 }
 
-void Menu::sterowanie(float width, float height){
+void Menu::potwierdzenie(float width, float height){
+    maksymalny_poziom = 3;
+    if(wybrany_rekord == 0){
+        menu[wybrany_rekord]=menu[wybrany_rekord+1];
+    }
+    if(wybrany_rekord>2){
+        wybrany_rekord = 0;
+    }
     menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("W - gora");
+    menu[0].setString("Czy na pewno?");
     menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
+    menu[0].setFillColor(sf::Color::White);
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("A - lewo");
+    menu[1].setString("Tak");
     menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
 
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("S - dol");
+    menu[2].setString("Nie");
     menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
 
-    menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("D - prawo");
-    menu[3].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 4));
-
-    menu[4].setFont(font);
-    menu[4].setFillColor(sf::Color::White);
-    menu[4].setString("Spacja - strzal");
-    menu[4].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 5));
-
-    menu[5].setFont(font);
-    menu[5].setColor(sf::Color::Red);
-    menu[5].setString("Wyjscie");
-    menu[5].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 6));
 }
 
 void Menu::draw(sf::RenderWindow &window)
@@ -331,6 +307,10 @@ Gracz wczytajDane(FILE *file, Gracz dane){
     std::cout<<"Życie -> "<<dane.zycie<<std::endl;
     std::cout<<"=================="<<std::endl;
     std::cout<<"Scores -> "<<dane.scores<<std::endl;
+    std::cout<<"=================="<<std::endl;
+    std::cout<<"Trudność -> "<<dane.trudnosc<<std::endl;
+    std::cout<<"=================="<<std::endl;
+    std::cout<<"Czas sesji -> "<<dane.czas<<std::endl;
     fclose(file);
     return dane;
 }
@@ -339,7 +319,7 @@ Gracz generuj(){
     Gracz dane;
     dane.zycie = 6;
     dane.scores = 0;
-    dane.trudnosc = 2;
+    dane.trudnosc = 1;
     dane.czas = 0;
     return dane;
 }
@@ -372,7 +352,7 @@ Healthbar::Healthbar() {
     healthbar.setTexture(tekstura);
     healthbar = sf::Sprite(tekstura, ksztalt);
     pozycja.x = 20.0f;
-    pozycja.y = -5.0f;
+    pozycja.y = 0.0f;
     healthbar.setScale(0.18f, 0.18f);
     healthbar.setPosition(pozycja);
 }
@@ -397,50 +377,89 @@ void Healthbar::update_hp(Gracz dane) {
 
 //INTERFEJS GRY (PUNTY ZYCIE ITD.)
 class Interfejs{
-protected:
-    sf::Vector2f bounds;
-    sf::Text* goraLewy;
+private:
+    sf::Text* srodek;
+    sf::RectangleShape tlo_sterowania;
+    sf::Vector2f size = {396.0f, 396.0f};
+    sf::Text* UpperLeft;
+    sf::Text* UpperRight;
     sf::Font* czcionka;
-    void inicjuj();
+
+    void inicjuj_interfejs();
+    void inicjuj_sterowanie();
 public:
-    Interfejs(sf::Vector2f _bounds);
-    Interfejs();
+    Interfejs(bool);
+    void rysuj_opcje(sf::RenderWindow& _okno);
     void draw(sf::RenderWindow& _okno);
-    void update(std::string _goraLewy);
+    void update(std::string, std::string);
 };
 
-void Interfejs::inicjuj() {
+void Interfejs::inicjuj_sterowanie() {
     czcionka = new sf::Font;
     if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
         return;
 
-    goraLewy = new sf::Text;
+    tlo_sterowania.setPosition(40, 40);
+    tlo_sterowania.setSize(size);
+    tlo_sterowania.setFillColor(sf::Color::Blue);
+    tlo_sterowania.setOutlineColor(sf::Color::Black);
+    tlo_sterowania.setOutlineThickness(4.0f);
 
-    goraLewy->setFont(*czcionka);
-    goraLewy->setCharacterSize(18);
-    goraLewy->setPosition(10, 5);
-    goraLewy->setFillColor(sf::Color::Black);
-    goraLewy->setStyle(sf::Text::Bold);
-    goraLewy->setString("DEBUG");
+    srodek = new sf::Text;
+    srodek->setFont(*czcionka);
+    srodek->setCharacterSize(25);
+    srodek->setPosition(100, 80);
+    srodek->setFillColor(sf::Color::White);
+    srodek->setStyle(sf::Text::Bold);
+    srodek->setString("W - gora\n\nA - lewo\n\nS - dol\n\nD - prawo\n\nSpacja - strzal\n\nWyjscie - ESC");
 }
 
-void Interfejs::update(const std::string _goraLewy) {
-    goraLewy->setString(_goraLewy);
+void Interfejs::inicjuj_interfejs() {
+    czcionka = new sf::Font;
+    if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
+        return;
+
+    UpperLeft = new sf::Text;
+    UpperLeft->setFont(*czcionka);
+    UpperLeft->setCharacterSize(18);
+    UpperLeft->setPosition(20, 10);
+    UpperLeft->setFillColor(sf::Color::Black);
+    UpperLeft->setStyle(sf::Text::Bold);
+    UpperLeft->setString("DEBUG UPPERLEFT");
+
+    UpperRight = new sf::Text;
+    UpperRight->setFont(*czcionka);
+    UpperRight->setCharacterSize(18);
+    UpperRight->setPosition(250, 5);
+    UpperRight->setFillColor(sf::Color::Black);
+    UpperRight->setStyle(sf::Text::Bold);
+    UpperRight->setString("DEBUG UPPERRIGHT");
 }
 
-Interfejs::Interfejs(sf::Vector2f _bounds) :bounds(_bounds) {
-    this->inicjuj();
+void Interfejs::update(const std::string text_upperleft, const std::string text_upperright) {
+    UpperLeft->setString(text_upperleft);
+    UpperRight->setString(text_upperright);
 }
 
-Interfejs::Interfejs() {
-    this->bounds.x = 476.0;
-    this->bounds.y = 476.0;
-    this->inicjuj();
+Interfejs::Interfejs(bool flaga)
+{
+    if(flaga)
+        this->inicjuj_interfejs();
+    if(!flaga)
+        this->inicjuj_sterowanie();
 }
 
-void Interfejs::draw(sf::RenderWindow& okno) {
-    okno.draw(*goraLewy);
+void Interfejs::draw(sf::RenderWindow& okno)
+{
+    okno.draw(*UpperLeft);
+    okno.draw(*UpperRight);
 }
+
+void Interfejs::rysuj_opcje(sf::RenderWindow& okno)
+{
+    okno.draw(tlo_sterowania);
+    okno.draw(*srodek);
+};
 
 
 
@@ -546,7 +565,6 @@ public:
     void drawEnemy(sf::RenderWindow &window);
     bool kolizja_gracz(Player gracz, int Nt);
     bool kolizja_pocisk(Pocisk pocisk, int Nt);
-    void random_speed();
 };
 
 Enemy::Enemy(int Nt)
@@ -702,5 +720,9 @@ float wczytaj_trudnosc(Gracz dane)
     else if(dane.trudnosc == 3)
     {
         return 3;
+    }
+    else
+    {
+     return 1;
     }
 }
