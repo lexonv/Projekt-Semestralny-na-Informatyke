@@ -156,22 +156,18 @@ void Menu::poziomtrudnosci(float width, float height) {
         wybrany_rekord = 0;
     }
     menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
     menu[0].setString("Poziom:");
     menu[0].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 1));
 
     menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Latwy");
     menu[1].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 2));
 
     menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Normalny");
     menu[2].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 3));
 
     menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
     menu[3].setString("Trudny");
     menu[3].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 4));
 }
@@ -181,33 +177,26 @@ void Menu::menuglowne(float width, float height) {
     menu[0].setFont(font);
     menu[0].setString("Graj");
     menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
-    menu[0].setFillColor(sf::Color::White);
 
     menu[1].setFont(font);
     menu[1].setString("Wczytaj");
     menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
-    menu[1].setFillColor(sf::Color::White);
 
     menu[2].setFont(font);
     menu[2].setString("Sterowanie");
     menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
-    menu[2].setFillColor(sf::Color::White);
 
     menu[3].setFont(font);
     menu[3].setString("Zapisz");
     menu[3].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 4));
-    menu[3].setFillColor(sf::Color::White);
 
     menu[4].setFont(font);
     menu[4].setString("Trudnosc");
     menu[4].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 5));
-    menu[4].setFillColor(sf::Color::White);
 
     menu[5].setFont(font);
     menu[5].setString("Wyjscie");
     menu[5].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 6));
-    menu[5].setFillColor(sf::Color::Red);
-
 }
 
 void Menu::potwierdzenie_wyjscia(float width, float height){
@@ -220,18 +209,15 @@ void Menu::potwierdzenie_wyjscia(float width, float height){
     }
     menu[0].setFont(font);
     menu[0].setString("Czy na pewno?");
-    menu[0].setPosition(sf::Vector2f(width / 3, height / (maksymalny_poziom + 1) * 1));
-    menu[0].setFillColor(sf::Color::White);
+    menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
 
     menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Tak");
-    menu[1].setPosition(sf::Vector2f(width / 3, height / (maksymalny_poziom + 1) * 2));
+    menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
 
     menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Nie");
-    menu[2].setPosition(sf::Vector2f(width / 3, height / (maksymalny_poziom + 1) * 3));
+    menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
 }
 
 void Menu::draw(sf::RenderWindow &window)
@@ -247,10 +233,12 @@ void Menu::Up()
     if (wybrany_rekord >= 0 && wybrany_rekord < maksymalny_poziom)
     {
         menu[wybrany_rekord].setStyle(sf::Text::Regular);
+        menu[wybrany_rekord].setFillColor(sf::Color::White);
         wybrany_rekord--;
         if (wybrany_rekord < 0)
             wybrany_rekord = maksymalny_poziom - 1;
         menu[wybrany_rekord].setStyle(sf::Text::Bold);
+        menu[wybrany_rekord].setFillColor(sf::Color::Red);
     }
 }
 
@@ -258,11 +246,13 @@ void Menu::Down()
 {
     if (wybrany_rekord >= 0 && wybrany_rekord < maksymalny_poziom)
     {
+        menu[wybrany_rekord].setFillColor(sf::Color::White);
         menu[wybrany_rekord].setStyle(sf::Text::Regular);
         wybrany_rekord++;
         if (wybrany_rekord >= maksymalny_poziom)
             wybrany_rekord = 0;
         menu[wybrany_rekord].setStyle(sf::Text::Bold);
+        menu[wybrany_rekord].setFillColor(sf::Color::Red);
     }
 }
 
@@ -400,7 +390,7 @@ private:
     void inicjuj_interfejs();
     void inicjuj_sterowanie();
 public:
-    Interfejs(bool);
+    explicit Interfejs(bool);
     void rysuj_opcje(sf::RenderWindow& _okno);
     void rysuj_interfejs(sf::RenderWindow& _okno);
     void update(std::string, std::string);

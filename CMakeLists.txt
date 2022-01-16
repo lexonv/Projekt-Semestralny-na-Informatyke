@@ -3,7 +3,7 @@ project(Projekt_Semestralny_na_Informatyke)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES main.cpp klasy.hpp)
 add_executable(Projekt_Semestralny_na_Informatyke ${SOURCE_FILES})
 include_directories(/usr/local/include)
 
