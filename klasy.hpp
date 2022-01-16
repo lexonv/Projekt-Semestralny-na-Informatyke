@@ -438,7 +438,7 @@ void Interfejs::inicjuj_interfejs() {
     UpperRight = new sf::Text;
     UpperRight->setFont(*czcionka);
     UpperRight->setCharacterSize(18);
-    UpperRight->setPosition(250, 5);
+    UpperRight->setPosition(230, 5);
     UpperRight->setFillColor(sf::Color::Black);
     UpperRight->setStyle(sf::Text::Bold);
     UpperRight->setString("DEBUG UPPERRIGHT");
