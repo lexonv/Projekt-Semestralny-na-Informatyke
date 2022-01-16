@@ -4,7 +4,7 @@
 #include "klasy.hpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Semestralny Projekt Gry");
+    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Projekt Semestralny Gry");
     window.setFramerateLimit(60);
     Interfejs* interfejs = new Interfejs(true);
     Menu menu(window.getSize().x, window.getSize().y);
@@ -14,9 +14,6 @@ int main() {
     int tryb_gry = 0;
     bool gra_w_toku = false;
     bool czy_otwarto_sterowanie = false;
-
-    //STWORZ NAPIS GAMEOVER
-    gameOver* end = new gameOver;
     bool czy_zrestartowano = false;
 
     //ZEGARKI DO KONTROLI MECHANIK
@@ -34,7 +31,7 @@ int main() {
     Player p1(50.0, 200.0);
 
     //STWORZ N PRZECIWNIKOW
-    int liczba_przeciwnikow = 25;
+    int liczba_przeciwnikow = 20;
     Enemy przeciwnik(liczba_przeciwnikow);
 
     //STWORZ POCISK
@@ -156,6 +153,7 @@ int main() {
                         window.close();
                         break;
                     case 2:
+                        menu.reset_indeks(5);
                         tryb_gry = 0;
                         break;
                 }
@@ -177,16 +175,25 @@ int main() {
                     case 1:
                         trudnosc = 1;
                         dane = poziom(6, 1);
+                        przeciwnik.restart();
+                        p1.restart(50,200);
+                        menu.reset_indeks(4);
                         tryb_gry = 0;
                         break;
                     case 2:
                         trudnosc = 2;
                         dane = poziom(3, 2);
+                        przeciwnik.restart();
+                        p1.restart(50,200);
+                        menu.reset_indeks(4);
                         tryb_gry = 0;
                         break;
                     case 3:
                         trudnosc = 3;
                         dane = poziom(1, 3);
+                        przeciwnik.restart();
+                        p1.restart(50,200);
+                        menu.reset_indeks(4);
                         tryb_gry = 0;
                         break;
                 }
@@ -196,9 +203,9 @@ int main() {
         //ZAPISZ DO PLIKU
         if(tryb_gry == 3)
         {
-            std::cout << "Zapisz..."<< std::endl;
             plik = fopen("dane.dat", "w+b");
             zapiszDane(plik, dane);
+            std::cout << "Zapisano!"<< std::endl;
             tryb_gry = 0;
         }
 
@@ -215,11 +222,14 @@ int main() {
             if(flaga_pocisk)
                 window.draw(pocisk->getPocisk());
 
+
+
             /*
              Uruchamia ciąg mechaniki zakończenia gry (życie = 0), a następnie jej zrestartowania
-             */
+            */
             if(dane.zycie <= 0)
             {
+                gameOver* end = new gameOver;
                 if(!czy_zrestartowano)
                 {
                     zegar_koniec.restart();
@@ -228,10 +238,8 @@ int main() {
                 window.draw(*end);
                 if(zegar_koniec.getElapsedTime().asSeconds() > 2.0f)
                 {
-                    /*
-                     Po odczekaniu czasu, zrestartuj gre resetując flagi oraz statystyki do poziomu domyślnego
-                     */
                     tryb_gry = 0;
+                    delete end;
                     gra_w_toku = false;
                     dane = generuj();
                     trudnosc = dane.trudnosc;

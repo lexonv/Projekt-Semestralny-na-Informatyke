@@ -117,7 +117,6 @@ void Player::restart(float dx, float dy){
 
 
 
-
 //MENU
 class Menu
 {
@@ -137,6 +136,11 @@ public:
     void menuglowne(float width, float height);
     void poziomtrudnosci(float width, float height);
     void potwierdzenie_wyjscia(float width, float height);
+    void reset_indeks(int jaki_rekord){
+        for(int i = 0; i<maksymalny_poziom;i++)
+            menu[i].setFillColor(sf::Color::White);
+        wybrany_rekord = jaki_rekord;
+    };
 };
 
 Menu::Menu(float width, float height){
@@ -156,6 +160,7 @@ void Menu::poziomtrudnosci(float width, float height) {
     if(wybrany_rekord == 0){
         menu[wybrany_rekord]=menu[1];
     }
+
     menu[0].setFont(font);
     menu[0].setString("Poziom:");
     menu[0].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 1));
@@ -404,7 +409,7 @@ void Interfejs::inicjuj_sterowanie() {
 
     tlo_sterowania.setPosition(40, 40);
     tlo_sterowania.setSize(size);
-    tlo_sterowania.setFillColor(sf::Color::Blue);
+    tlo_sterowania.setFillColor(sf::Color::Red);
     tlo_sterowania.setOutlineColor(sf::Color::Black);
     tlo_sterowania.setOutlineThickness(4.0f);
 
@@ -463,8 +468,6 @@ void Interfejs::rysuj_opcje(sf::RenderWindow& okno)
     okno.draw(tlo_sterowania);
     okno.draw(*srodek);
 }
-
-
 
 
 
@@ -789,8 +792,8 @@ void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, bool flaga_pocisk
         }
         else
         {
-            flaga_pocisk = false;
             pocisk->respawn_pocisk();
+            flaga_pocisk = false;
         }
     }
 }
