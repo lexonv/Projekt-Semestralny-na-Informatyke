@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Projekt_Semestralny_na_Informatyke"
+			"path" : "Projekt"
 		}
 	],
 	"backtrace" : 1,
@@ -67,7 +67,7 @@
 			]
 		}
 	],
-	"id" : "Projekt_Semestralny_na_Informatyke::@6890427a1f51a3e7e1df",
+	"id" : "Projekt::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -112,8 +112,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "Projekt_Semestralny_na_Informatyke",
-	"nameOnDisk" : "Projekt_Semestralny_na_Informatyke",
+	"name" : "Projekt",
+	"nameOnDisk" : "Projekt",
 	"paths" : 
 	{
 		"build" : ".",
@@ -127,13 +127,6 @@
 			[
 				0
 			]
-		},
-		{
-			"name" : "Header Files",
-			"sourceIndexes" : 
-			[
-				1
-			]
 		}
 	],
 	"sources" : 
@@ -143,11 +136,6 @@
 			"compileGroupIndex" : 0,
 			"path" : "main.cpp",
 			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"path" : "klasy.hpp",
-			"sourceGroupIndex" : 1
 		}
 	],
 	"type" : "EXECUTABLE"
