@@ -1,14 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-//#include "class/Player.h"
-//#include "class/Menu.h"
-//#include "class/Healthbar.h"
-//#include "class/Interfejs.h"
-//#include "class/gameOver.h"
-//#include "class/Pocisk.h"
-//#include "class/Enemy.h"
-//#include "class/Game.h"
 #include "klasy.hpp"
 
 int main() {
@@ -42,7 +34,7 @@ int main() {
     Player p1(50.0, 200.0);
 
     //STWORZ N PRZECIWNIKOW
-    int liczba_przeciwnikow = 16;
+    int liczba_przeciwnikow = 25;
     Enemy przeciwnik(liczba_przeciwnikow);
 
     //STWORZ POCISK
@@ -52,7 +44,9 @@ int main() {
 
     while (window.isOpen())
     {
+
         sf::Event event;
+        //OBSLUGA OKNA GRY
         if(tryb_gry==1)
         {
             //CZAS DANEJ SESJI
@@ -79,7 +73,7 @@ int main() {
                 flaga_pocisk = true;
                 zegar_cooldown.restart();
             }
-            obsluga_pocisku(zegar_cooldown, pocisk, p1, flaga_pocisk, &przeciwnik);
+            obsluga_pocisku(zegar_cooldown, pocisk, flaga_pocisk);
             if(przeciwnik.kolizja_pocisk(*pocisk, liczba_przeciwnikow)){
                 dane.scores += 1;
                 pocisk->respawn_pocisk();
@@ -100,15 +94,11 @@ int main() {
 
             if (event.type == sf::Event::KeyPressed)
             {
-
-                //PRZESUWAJ SIĘ PO REKORDACH MENU
-                menu = poruszaj_menu(menu, event);
-
-                //POWROT DO MENU
+                //POWROT DO MENU Z OKNA GRY
                 if (event.key.code == sf::Keyboard::Escape && tryb_gry == 1){
                     tryb_gry = 0;
                 }
-
+                //OTWORZ STEROWANIE
                 if(event.key.code == sf::Keyboard::F1 && tryb_gry == 1) {
                     tryb_gry = 2;
                 }
@@ -144,12 +134,17 @@ int main() {
                             break;
                     }
                 }
+                //PRZESUWAJ SIĘ PO REKORDACH MENU
+                menu = poruszaj_menu(menu, event);
             }
         }
+
         window.clear();
+
+        //WYJSCIE Z GRY
         if(tryb_gry == 5)
         {
-            menu.potwierdzenie(window.getSize().x, window.getSize().y);
+            menu.potwierdzenie_wyjscia(window.getSize().x, window.getSize().y);
             window.clear();
             tlo_menu.draw(window);
             menu.draw(window);
@@ -175,32 +170,28 @@ int main() {
             tlo_menu.draw(window);
             menu.draw(window);
 
-            if (event.key.code == sf::Keyboard::Enter && menu.getRekord() == 1)
+            if(event.key.code == sf::Keyboard::Enter)
             {
-                //latwy
-                trudnosc = 1;
-                dane = poziom(6, 1);
-                tryb_gry = 0;
-            }
-
-            if (event.key.code == sf::Keyboard::Enter && menu.getRekord() == 2)
-            {
-                //sredni
-                trudnosc = 2;
-                dane = poziom(3, 2);
-                tryb_gry = 0;
-            }
-
-            if (event.key.code == sf::Keyboard::Enter && menu.getRekord() == 3)
-            {
-                //trudny
-                trudnosc = 3;
-                dane = poziom(1, 3);
-                tryb_gry = 0;
+                switch (menu.getRekord())
+                {
+                    case 1:
+                        trudnosc = 1;
+                        dane = poziom(6, 1);
+                        tryb_gry = 0;
+                        break;
+                    case 2:
+                        trudnosc = 2;
+                        dane = poziom(3, 2);
+                        tryb_gry = 0;
+                        break;
+                    case 3:
+                        trudnosc = 3;
+                        dane = poziom(1, 3);
+                        tryb_gry = 0;
+                        break;
+                }
             }
         }
-
-
 
         //ZAPISZ DO PLIKU
         if(tryb_gry == 3)
@@ -211,10 +202,8 @@ int main() {
             tryb_gry = 0;
         }
 
-
-
         //START GRY
-        if(tryb_gry==1 || czy_otwarto_sterowanie)
+        if(tryb_gry==1 || (czy_otwarto_sterowanie && gra_w_toku))
         {
             tlo_gra.draw(window);
             interfejs->rysuj_interfejs(window);
@@ -226,7 +215,9 @@ int main() {
             if(flaga_pocisk)
                 window.draw(pocisk->getPocisk());
 
-            //WARUNEK KONCA GRY #GAME_OVER
+            /*
+             Uruchamia ciąg mechaniki zakończenia gry (życie = 0), a następnie jej zrestartowania
+             */
             if(dane.zycie <= 0)
             {
                 if(!czy_zrestartowano)
@@ -237,11 +228,15 @@ int main() {
                 window.draw(*end);
                 if(zegar_koniec.getElapsedTime().asSeconds() > 2.0f)
                 {
+                    /*
+                     Po odczekaniu czasu, zrestartuj gre resetując flagi oraz statystyki do poziomu domyślnego
+                     */
                     tryb_gry = 0;
                     gra_w_toku = false;
                     dane = generuj();
                     trudnosc = dane.trudnosc;
                     przeciwnik.restart();
+                    p1.restart(50,200);
                     czy_zrestartowano = false;
                 }
             }
@@ -255,20 +250,19 @@ int main() {
             Interfejs* opcje = new Interfejs(false);
             opcje->rysuj_opcje(window);
             czy_otwarto_sterowanie = true;
+
             if (event.key.code == sf::Keyboard::Escape && gra_w_toku)
             {
                 delete opcje;
                 czy_otwarto_sterowanie = false;
                 tryb_gry = 1;
             }
-
-            if (event.key.code == sf::Keyboard::Escape && !gra_w_toku)
+            else if (event.key.code == sf::Keyboard::Escape && !gra_w_toku)
             {
                 delete opcje;
                 czy_otwarto_sterowanie = false;
                 tryb_gry = 0;
             }
-
         }
         //POKAZ MENU GLOWNE
         if(tryb_gry==0)

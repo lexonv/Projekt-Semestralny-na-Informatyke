@@ -19,6 +19,7 @@ public:
     void moveD(float x, float y, sf::RenderWindow&);
     sf::Sprite& getPlayer(){ return gracz; }
     sf::Vector2f getPos() { return gracz.getPosition(); }
+    void restart(float, float);
 };
 
 Player::Player(){
@@ -66,7 +67,7 @@ void Player::moveA(float xt, float yt){
     else
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
-    if(getPos().x <=0){
+    if(getPos().x <= 0){
         pos.x = 0;
     }
     gracz.move(pos);
@@ -101,11 +102,18 @@ void Player::moveD(float xt, float yt, sf::RenderWindow &window){
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
 
-    if(getPos().x >=window.getSize().x -50.0f){
+    if(getPos().x >= window.getSize().x -50.0f){
         pos.x=0;
     }
     gracz.move(pos);
 }
+
+void Player::restart(float dx, float dy) {
+    position.x = dx;
+    position.y = dy;
+    gracz.setPosition(position);
+}
+
 
 
 
@@ -127,7 +135,7 @@ public:
     void draw(sf::RenderWindow &window);
     void menuglowne(float width, float height);
     void poziomtrudnosci(float width, float height);
-    void potwierdzenie(float width, float height);
+    void potwierdzenie_wyjscia(float width, float height);
 };
 
 Menu::Menu(float width, float height){
@@ -202,7 +210,7 @@ void Menu::menuglowne(float width, float height) {
 
 }
 
-void Menu::potwierdzenie(float width, float height){
+void Menu::potwierdzenie_wyjscia(float width, float height){
     maksymalny_poziom = 3;
     if(wybrany_rekord == 0){
         menu[wybrany_rekord]=menu[wybrany_rekord+1];
@@ -212,19 +220,18 @@ void Menu::potwierdzenie(float width, float height){
     }
     menu[0].setFont(font);
     menu[0].setString("Czy na pewno?");
-    menu[0].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 1));
+    menu[0].setPosition(sf::Vector2f(width / 3, height / (maksymalny_poziom + 1) * 1));
     menu[0].setFillColor(sf::Color::White);
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Tak");
-    menu[1].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 2));
+    menu[1].setPosition(sf::Vector2f(width / 3, height / (maksymalny_poziom + 1) * 2));
 
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Nie");
-    menu[2].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 3));
-
+    menu[2].setPosition(sf::Vector2f(width / 3, height / (maksymalny_poziom + 1) * 3));
 }
 
 void Menu::draw(sf::RenderWindow &window)
@@ -276,6 +283,8 @@ void myDelay(int opoznienie)
 
 
 
+
+
 //ZAPIS DO PLIKU i STRUKTURA DANYCH
 typedef struct{
     int zycie;
@@ -287,7 +296,7 @@ typedef struct{
 void zapiszDane(FILE *file, Gracz p)
 {
     file = fopen("dane.dat", "w+b");
-    if(file == NULL)
+    if(file == nullptr)
     {
         perror("ER00R");
     }
@@ -376,6 +385,8 @@ void Healthbar::update_hp(Gracz dane) {
 
 
 
+
+
 //INTERFEJS GRY (PUNTY ZYCIE ITD.)
 class Interfejs{
 private:
@@ -460,7 +471,9 @@ void Interfejs::rysuj_opcje(sf::RenderWindow& okno)
 {
     okno.draw(tlo_sterowania);
     okno.draw(*srodek);
-};
+}
+
+
 
 
 
@@ -482,6 +495,8 @@ public:
         this->setString("GAME OVER");
     }
 };
+
+
 
 
 
@@ -551,6 +566,8 @@ void Pocisk::respawn_pocisk() {
 
 
 
+
+
 //PRZECIWNICY
 class Enemy{
 private:
@@ -572,9 +589,8 @@ public:
 Enemy::Enemy(int Nt)
 {
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(200,500);
+    std::uniform_int_distribution<> distX(300,650);
     std::uniform_int_distribution<> distY(50,450);
-
     texture_enemy.loadFromFile("textures/szkieletor.png");
     ksztalt_enemy = sf::IntRect({0, 0, 60, 60});
     N = Nt;
@@ -591,7 +607,7 @@ void Enemy::move(float dx)
 {
     sf::Vector2f pos;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(480,600);
+    std::uniform_int_distribution<> distX(480,700);
     std::uniform_int_distribution<> distY(50,420);
     pos.x = dx * vel.x;
     ksztalt_enemy.top = 60;
@@ -611,12 +627,11 @@ void Enemy::move(float dx)
 
 void Enemy::drawEnemy(sf::RenderWindow &window)
 {
-    for(int i = 0;i<N;i++){
+    for(int i = 0;i<N;i++)
+    {
         window.draw(enemy[i]);
     }
 }
-
-
 
 //KOLIZJA POCISKU Z PRZECIWNIKIEM
 bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt){
@@ -653,13 +668,15 @@ bool Enemy::kolizja_gracz(Player gracz, int Nt){
 
 void Enemy::restart() {
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distX(200,500);
+    std::uniform_int_distribution<> distX(200,600);
     std::uniform_int_distribution<> distY(50,450);
     for(int i = 0;i<N;i++)
     {
         enemy[i].setPosition(sf::Vector2f(distX(gen),distY(gen)));
     }
 }
+
+
 
 
 
@@ -686,7 +703,7 @@ Background::Background(int height, int width, bool flaga)
         texture.loadFromFile("textures/pg.jpeg");
     }
     background = sf::Sprite(texture, size);
-};
+}
 
 void Background::draw(sf::RenderWindow &window){
     window.draw(background);
@@ -768,7 +785,7 @@ void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc)
     }
 }
 
-void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, Player p1, bool flaga_pocisk, Enemy *przeciwnik){
+void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, bool flaga_pocisk){
     if(flaga_pocisk)
     {
         //OBSLUGA POCISKU
