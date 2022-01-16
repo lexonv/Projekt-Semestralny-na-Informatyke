@@ -44,6 +44,7 @@ void Player::moveW(float xt, float yt){
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
+
     ksztalt.top = 0;
     if(ksztalt.left == 512)
         ksztalt.left = 0;
@@ -108,7 +109,7 @@ void Player::moveD(float xt, float yt, sf::RenderWindow &window){
     gracz.move(pos);
 }
 
-void Player::restart(float dx, float dy) {
+void Player::restart(float dx, float dy){
     position.x = dx;
     position.y = dy;
     gracz.setPosition(position);
@@ -149,11 +150,11 @@ Menu::Menu(float width, float height){
 
 void Menu::poziomtrudnosci(float width, float height) {
     maksymalny_poziom = 4;
-    if(wybrany_rekord == 0){
-        menu[wybrany_rekord]=menu[1];
-    }
     if(wybrany_rekord>3){
         wybrany_rekord = 0;
+    }
+    if(wybrany_rekord == 0){
+        menu[wybrany_rekord]=menu[1];
     }
     menu[0].setFont(font);
     menu[0].setString("Poziom:");
@@ -232,8 +233,8 @@ void Menu::Up()
 {
     if (wybrany_rekord >= 0 && wybrany_rekord < maksymalny_poziom)
     {
-        menu[wybrany_rekord].setStyle(sf::Text::Regular);
         menu[wybrany_rekord].setFillColor(sf::Color::White);
+        menu[wybrany_rekord].setStyle(sf::Text::Regular);
         wybrany_rekord--;
         if (wybrany_rekord < 0)
             wybrany_rekord = maksymalny_poziom - 1;
@@ -695,7 +696,8 @@ Background::Background(int height, int width, bool flaga)
     background = sf::Sprite(texture, size);
 }
 
-void Background::draw(sf::RenderWindow &window){
+void Background::draw(sf::RenderWindow &window)
+{
     window.draw(background);
 }
 
@@ -729,7 +731,7 @@ Player poruszaj_graczem(Player gracz, sf::RenderWindow &window, float dir)
     {
         gracz.moveS(0,dir, window);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         gracz.moveA(-dir,0);
     }
@@ -775,7 +777,8 @@ void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc)
     }
 }
 
-void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, bool flaga_pocisk){
+void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, bool flaga_pocisk)
+{
     if(flaga_pocisk)
     {
         //OBSLUGA POCISKU

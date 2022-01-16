@@ -4,7 +4,7 @@
 #include "klasy.hpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Projekt");
+    sf::RenderWindow window(sf::VideoMode(476.0, 476.0), "Semestralny Projekt Gry");
     window.setFramerateLimit(60);
     Interfejs* interfejs = new Interfejs(true);
     Menu menu(window.getSize().x, window.getSize().y);
@@ -59,7 +59,7 @@ int main() {
             cooldown_pocisku = CD(zegar_cooldown);
 
             //STEROWANIE GRACZEM
-            p1 = poruszaj_graczem(p1, window, 1.5f);
+            p1 = poruszaj_graczem(p1, window, 2.0f);
 
             //OBSLUGA KOLIZJI PRZECIWNIK - PLAYER
             if(przeciwnik.kolizja_gracz(p1, liczba_przeciwnikow) && zegar_kolizja.getElapsedTime().asSeconds() > 1.0f){
