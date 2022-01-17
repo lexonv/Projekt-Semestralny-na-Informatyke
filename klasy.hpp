@@ -557,7 +557,7 @@ bool Pocisk::warunek_pocisk()
 void Pocisk::respawn_pocisk()
 {
     position_pocisk.x = -100.0f;
-    position_pocisk.y = -50.0f;
+    position_pocisk.y = 50.0f;
     pocisk->setPosition(position_pocisk);
 }
 
@@ -778,22 +778,17 @@ void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc)
     }
 }
 
-void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, bool flaga_pocisk)
+void obsluga_pocisku(Pocisk *pocisk)
 {
-    if(flaga_pocisk)
-    {
         //OBSLUGA POCISKU
         if(pocisk->warunek_pocisk())
         {
             pocisk->move_pocisk(8.0f);
-            zegar_cooldown.restart();
         }
         else
         {
             pocisk->respawn_pocisk();
-            flaga_pocisk = false;
         }
-    }
 }
 
 Gracz set_trudnosc(int trudnosc, Gracz dane)

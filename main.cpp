@@ -10,14 +10,9 @@ int main() {
     Menu menu(window.getSize().x, window.getSize().y);
     Healthbar hp(20.0f, 0.0f);
 
-    int trudnosc;
-    int tryb_gry = 0;
-    bool gra_w_toku = false;
-    bool czy_otwarto_sterowanie = false;
-    bool czy_zrestartowano = false;
-    bool pokaz_powiadomienie = false;
+    int trudnosc, tryb_gry = 0;
+    bool gra_w_toku = false, czy_otwarto_sterowanie = false, czy_zrestartowano = false, pokaz_powiadomienie = false;
 
-    //ZEGARKI DO KONTROLI MECHANIK
     sf::Clock zegar_kolizja, zegar_koniec, zegar_cooldown, zegar, zegar_powiadomienie;
 
     //STWORZ TLO GRY
@@ -38,7 +33,6 @@ int main() {
     //STWORZ POCISK
     auto *pocisk = new Pocisk();
     int cooldown_pocisku = 2;
-    bool flaga_pocisk= false;
 
     while (window.isOpen())
     {
@@ -66,10 +60,9 @@ int main() {
             //OBSLUGA POCISKU oraz KOLIZJI PRZECIWNIK - POCISK
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && zegar_cooldown.getElapsedTime().asSeconds() > 2.0f){
                 pocisk->set_pocisk(p1);
-                flaga_pocisk = true;
                 zegar_cooldown.restart();
             }
-            obsluga_pocisku(zegar_cooldown, pocisk, flaga_pocisk);
+            obsluga_pocisku(pocisk);
             if(przeciwnik.kolizja_pocisk(*pocisk, liczba_przeciwnikow)){
                 dane.scores += 1;
                 pocisk->respawn_pocisk();
@@ -216,8 +209,7 @@ int main() {
             hp.update_hp(dane);
             window.draw(p1.getPlayer());
             przeciwnik.drawEnemy(window);
-            if(flaga_pocisk)
-                window.draw(pocisk->getPocisk());
+            window.draw(pocisk->getPocisk());
 
             if(dane.zycie <= 0)
             {
