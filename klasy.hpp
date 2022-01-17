@@ -12,7 +12,6 @@ private:
     sf::IntRect ksztalt;
 public:
     Player();
-    Player(float x, float y);
     void moveW(float x, float y);
     void moveA(float x, float y);
     void moveS(float x, float y, sf::RenderWindow&);
@@ -22,25 +21,18 @@ public:
     void restart(float, float);
 };
 
-Player::Player(){
-    position.x = 100;
-    position.y = 100;
+Player::Player()
+{
+    position.x = 50.0f;
+    position.y = 200.0f;
     tekstura.loadFromFile("textures/profesor.png");
     ksztalt = sf::IntRect({0, 0, 64, 64});
     gracz = sf::Sprite (tekstura, ksztalt);
     gracz.setPosition(position);
 }
 
-Player::Player(float xt, float yt){
-    position.x = xt;
-    position.y = yt;
-    tekstura.loadFromFile("textures/profesor.png");
-    ksztalt = sf::IntRect({0, 0, 64, 64});
-    gracz = sf::Sprite (tekstura, ksztalt);
-    gracz.setPosition(position);
-}
-
-void Player::moveW(float xt, float yt){
+void Player::moveW(float xt, float yt)
+{
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
@@ -58,7 +50,8 @@ void Player::moveW(float xt, float yt){
     gracz.move(pos);
 }
 
-void Player::moveA(float xt, float yt){
+void Player::moveA(float xt, float yt)
+{
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
@@ -74,7 +67,8 @@ void Player::moveA(float xt, float yt){
     gracz.move(pos);
 }
 
-void Player::moveS(float xt, float yt, sf::RenderWindow &window){
+void Player::moveS(float xt, float yt, sf::RenderWindow &window)
+{
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
@@ -86,13 +80,15 @@ void Player::moveS(float xt, float yt, sf::RenderWindow &window){
         ksztalt.left += 64;
     gracz.setTextureRect(ksztalt);
 
-    if(getPos().y >= window.getSize().y - 60.0f){
+    if(getPos().y >= window.getSize().y - 60.0f)
+    {
         pos.y=0;
     }
     gracz.move(pos);
 }
 
-void Player::moveD(float xt, float yt, sf::RenderWindow &window){
+void Player::moveD(float xt, float yt, sf::RenderWindow &window)
+{
     sf::Vector2f pos;
     pos.x = xt * vel.x;
     pos.y = yt * vel.y;
@@ -109,7 +105,8 @@ void Player::moveD(float xt, float yt, sf::RenderWindow &window){
     gracz.move(pos);
 }
 
-void Player::restart(float dx, float dy){
+void Player::restart(float dx, float dy)
+{
     position.x = dx;
     position.y = dy;
     gracz.setPosition(position);
@@ -118,32 +115,26 @@ void Player::restart(float dx, float dy){
 
 
 //MENU
-class Menu
-{
-
+class Menu{
 private:
     sf::Font font;
     sf::Text menu[6];//maksymalna liczba poziomow
     int wybrany_rekord = 0;
     int maksymalny_poziom = 6;
-
 public:
     Menu(float width, float height);
-    void Up();
-    void Down();
+    void up();
+    void down();
     int getRekord() { return wybrany_rekord; }
     void draw(sf::RenderWindow &window);
     void menuglowne(float width, float height);
     void poziomtrudnosci(float width, float height);
     void potwierdzenie_wyjscia(float width, float height);
-    void reset_indeks(int jaki_rekord){
-        for(int i = 0; i<maksymalny_poziom;i++)
-            menu[i].setFillColor(sf::Color::White);
-        wybrany_rekord = jaki_rekord;
-    };
+    void reset_indeks(int jaki_rekord);
 };
 
-Menu::Menu(float width, float height){
+Menu::Menu(float width, float height)
+{
     if (!font.loadFromFile("fonts/vikingfont.ttf"))
     {
         std::cout<<"ER00R"<<std::endl;
@@ -152,13 +143,14 @@ Menu::Menu(float width, float height){
     this->menuglowne(width, height);
 }
 
-void Menu::poziomtrudnosci(float width, float height) {
+void Menu::poziomtrudnosci(float width, float height)
+{
     maksymalny_poziom = 4;
     if(wybrany_rekord>3){
         wybrany_rekord = 0;
     }
     if(wybrany_rekord == 0){
-        menu[wybrany_rekord]=menu[1];
+        menu[wybrany_rekord]=menu[wybrany_rekord+1];
     }
 
     menu[0].setFont(font);
@@ -178,7 +170,8 @@ void Menu::poziomtrudnosci(float width, float height) {
     menu[3].setPosition(sf::Vector2f(width / 4, height / (maksymalny_poziom + 1) * 4));
 }
 
-void Menu::menuglowne(float width, float height) {
+void Menu::menuglowne(float width, float height)
+{
     maksymalny_poziom = 6;
     menu[0].setFont(font);
     menu[0].setString("Graj");
@@ -205,7 +198,8 @@ void Menu::menuglowne(float width, float height) {
     menu[5].setPosition(sf::Vector2f(width / 6, height / (maksymalny_poziom + 1) * 6));
 }
 
-void Menu::potwierdzenie_wyjscia(float width, float height){
+void Menu::potwierdzenie_wyjscia(float width, float height)
+{
     maksymalny_poziom = 3;
     if(wybrany_rekord == 0){
         menu[wybrany_rekord]=menu[wybrany_rekord+1];
@@ -234,7 +228,7 @@ void Menu::draw(sf::RenderWindow &window)
     }
 }
 
-void Menu::Up()
+void Menu::up()
 {
     if (wybrany_rekord >= 0 && wybrany_rekord < maksymalny_poziom)
     {
@@ -248,7 +242,7 @@ void Menu::Up()
     }
 }
 
-void Menu::Down()
+void Menu::down()
 {
     if (wybrany_rekord >= 0 && wybrany_rekord < maksymalny_poziom)
     {
@@ -262,7 +256,16 @@ void Menu::Down()
     }
 }
 
-void myDelay(int opoznienie)
+void Menu::reset_indeks(int jaki_rekord)
+{
+    {
+        for(int i = 0; i<maksymalny_poziom;i++)
+            menu[i].setFillColor(sf::Color::White);
+        wybrany_rekord = jaki_rekord;
+    }
+}
+
+void opoznienie(int opoznienie)
 {
     sf::Clock zegar;
     sf::Time czas;
@@ -276,8 +279,6 @@ void myDelay(int opoznienie)
         }
     }
 }
-
-
 
 
 
@@ -304,32 +305,26 @@ void zapiszDane(FILE *file, Gracz p)
     fclose(file);
 }
 
-Gracz wczytajDane(FILE *file, Gracz dane){
+Gracz wczytajDane(FILE *file, Gracz dane)
+{
     file = fopen("dane.dat", "rb");
     fseek(file, 0, SEEK_SET);
     fread(&dane, sizeof(dane), 1, file);
-    std::cout<<"===== Dane: ====="<<std::endl;
-    std::cout<<"Życie -> "<<dane.zycie<<std::endl;
-    std::cout<<"=================="<<std::endl;
-    std::cout<<"Scores -> "<<dane.scores<<std::endl;
-    std::cout<<"=================="<<std::endl;
-    std::cout<<"Trudność -> "<<dane.trudnosc<<std::endl;
-    std::cout<<"=================="<<std::endl;
-    std::cout<<"Czas sesji -> "<<dane.czas<<std::endl;
     fclose(file);
     return dane;
 }
 
-Gracz generuj(){
+Gracz generuj()
+{
     Gracz dane;
     dane.zycie = 3;
     dane.scores = 0;
-    dane.trudnosc = 2;
     dane.czas = 0;
     return dane;
 }
 
-Gracz poziom(int hp, int trudnosc){
+Gracz poziom(int hp, int trudnosc)
+{
     Gracz dane;
     dane.zycie = hp;
     dane.scores = 0;
@@ -337,6 +332,8 @@ Gracz poziom(int hp, int trudnosc){
     dane.czas = 0;
     return dane;
 }
+
+
 
 //HEALTHBAR W INTERFEJSIE
 class Healthbar{
@@ -352,7 +349,8 @@ public:
     void update_hp(Gracz);
 };
 
-Healthbar::Healthbar(float dx, float dy) {
+Healthbar::Healthbar(float dx, float dy)
+{
     tekstura.loadFromFile("textures/healthbar.png");
     ksztalt = sf::IntRect({0,0,630,179});
     healthbar.setTexture(tekstura);
@@ -363,7 +361,8 @@ Healthbar::Healthbar(float dx, float dy) {
     healthbar.setPosition(pozycja);
 }
 
-void Healthbar::update_hp(Gracz dane) {
+void Healthbar::update_hp(Gracz dane)
+{
     if(dane.zycie >= 6)
         ksztalt.top = 895;
     if(dane.zycie == 5)
@@ -378,8 +377,6 @@ void Healthbar::update_hp(Gracz dane) {
         ksztalt.top = -30;
     healthbar.setTextureRect(ksztalt);
 }
-
-
 
 
 
@@ -402,7 +399,8 @@ public:
     void update(std::string, std::string);
 };
 
-void Interfejs::inicjuj_sterowanie() {
+void Interfejs::inicjuj_sterowanie()
+{
     czcionka = new sf::Font;
     if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
         return;
@@ -422,7 +420,8 @@ void Interfejs::inicjuj_sterowanie() {
     srodek->setString("W - gora\n\nA - lewo\n\nS - dol\n\nD - prawo\n\nSpacja - strzal\n\nWyjscie - ESC");
 }
 
-void Interfejs::inicjuj_interfejs() {
+void Interfejs::inicjuj_interfejs()
+{
     czcionka = new sf::Font;
     if (!czcionka->loadFromFile("fonts/vikingfont.ttf"))
         return;
@@ -444,7 +443,8 @@ void Interfejs::inicjuj_interfejs() {
     UpperRight->setString("DEBUG UPPERRIGHT");
 }
 
-void Interfejs::update(const std::string text_upperleft, const std::string text_upperright) {
+void Interfejs::update(const std::string text_upperleft, const std::string text_upperright)
+{
     UpperLeft->setString(text_upperleft);
     UpperRight->setString(text_upperright);
 }
@@ -492,8 +492,6 @@ public:
 
 
 
-
-
 //LOGIKA DZIALANIA POCISKU
 class Pocisk{
 private:
@@ -512,7 +510,8 @@ public:
     void respawn_pocisk();
 };
 
-Pocisk::Pocisk(){
+Pocisk::Pocisk()
+{
     tekstura_pocisk.loadFromFile("textures/fireball.png");
     ksztalt_pocisk = sf::IntRect({0, 0, 512, 512});
     position_pocisk.x = -100.0f;
@@ -522,13 +521,15 @@ Pocisk::Pocisk(){
     pocisk->setScale(0.2f, 0.2f);
 }
 
-void Pocisk::set_pocisk(Player p) {
+void Pocisk::set_pocisk(Player p)
+{
     position_pocisk.x = p.getPos().x;
     position_pocisk.y = p.getPos().y;
     pocisk->setPosition(position_pocisk);
 }
 
-void Pocisk::move_pocisk(float dx){
+void Pocisk::move_pocisk(float dx)
+{
     sf::Vector2f pos;
     ksztalt_pocisk.top = 0;
     if(ksztalt_pocisk.left == 3072)
@@ -543,7 +544,8 @@ void Pocisk::move_pocisk(float dx){
     }
 }
 
-bool Pocisk::warunek_pocisk() {
+bool Pocisk::warunek_pocisk()
+{
     if(pocisk->getPosition().x >=480 || pocisk->getPosition().x <= -10)
     {
         return false;
@@ -552,13 +554,12 @@ bool Pocisk::warunek_pocisk() {
         return true;
 }
 
-void Pocisk::respawn_pocisk() {
+void Pocisk::respawn_pocisk()
+{
     position_pocisk.x = -100.0f;
     position_pocisk.y = -50.0f;
     pocisk->setPosition(position_pocisk);
 }
-
-
 
 
 
@@ -628,7 +629,8 @@ void Enemy::drawEnemy(sf::RenderWindow &window)
 }
 
 //KOLIZJA POCISKU Z PRZECIWNIKIEM
-bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt){
+bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt)
+{
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distX(480,500);
     std::uniform_int_distribution<> distY(50,420);
@@ -638,7 +640,6 @@ bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt){
         if(sqrt((pocisk.getPos_pocisk().x - enemy[i].getPosition().x)*(pocisk.getPos_pocisk().x - enemy[i].getPosition().x)+
                 (pocisk.getPos_pocisk().y - enemy[i].getPosition().y)*(pocisk.getPos_pocisk().y - enemy[i].getPosition().y))<20)
         {
-            std::cout<<"Kolizja pocisku z przeciwnik["<<i<<"]"<<std::endl;
             enemy[i].setPosition(distX(gen), distY(gen));
             return true;
         }
@@ -647,20 +648,21 @@ bool Enemy::kolizja_pocisk(Pocisk pocisk, int Nt){
 }
 
 //KOLIZJA GRACZA Z PRZECIWNIKIEM
-bool Enemy::kolizja_gracz(Player gracz, int Nt){
+bool Enemy::kolizja_gracz(Player gracz, int Nt)
+{
     for (int i = 0; i < Nt; i++)
     {
         if (sqrt((gracz.getPos().x - enemy[i].getPosition().x) * (gracz.getPos().x - enemy[i].getPosition().x) +
                  (gracz.getPos().y - enemy[i].getPosition().y) * (gracz.getPos().y - enemy[i].getPosition().y)) < 20)
         {
-            std::cout << "Kolizja gracza z przeciwnik[" << i << "]" << std::endl;
             return true;
         }
     }
     return false;
 }
 
-void Enemy::restart() {
+void Enemy::restart()
+{
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distX(200,600);
     std::uniform_int_distribution<> distY(50,450);
@@ -669,8 +671,6 @@ void Enemy::restart() {
         enemy[i].setPosition(sf::Vector2f(distX(gen),distY(gen)));
     }
 }
-
-
 
 
 
@@ -703,8 +703,6 @@ void Background::draw(sf::RenderWindow &window)
 {
     window.draw(background);
 }
-
-
 
 
 
@@ -750,13 +748,13 @@ Menu poruszaj_menu(Menu menu, sf::Event event)
 {
     if (event.key.code == sf::Keyboard::Up)
     {
-        myDelay(100);
-        menu.Up();
+        opoznienie(100);
+        menu.up();
     }
     else if (event.key.code == sf::Keyboard::Down)
     {
-        myDelay(100);
-        menu.Down();
+        opoznienie(100);
+        menu.down();
     }
     return menu;
 }
@@ -795,5 +793,23 @@ void obsluga_pocisku(sf::Clock zegar_cooldown, Pocisk *pocisk, bool flaga_pocisk
             pocisk->respawn_pocisk();
             flaga_pocisk = false;
         }
+    }
+}
+
+Gracz set_trudnosc(int trudnosc, Gracz dane)
+{
+    switch(trudnosc)
+    {
+        case 1:
+            dane = poziom(6, 1);
+            return dane;
+        case 2:
+            dane = poziom(3, 2);
+            return dane;
+        case 3:
+            dane = poziom(1, 3);
+            return dane;
+        default:
+            return dane;
     }
 }

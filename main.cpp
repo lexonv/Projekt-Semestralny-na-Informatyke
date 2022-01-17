@@ -28,7 +28,7 @@ int main() {
     dane = generuj();
     FILE* plik;
     trudnosc = dane.trudnosc;
-    Player p1(50.0, 200.0);
+    Player p1;
 
     //STWORZ N PRZECIWNIKOW
     int liczba_przeciwnikow = 20;
@@ -43,7 +43,6 @@ int main() {
     {
 
         sf::Event event;
-        //OBSLUGA OKNA GRY
         if(tryb_gry==1)
         {
             //CZAS DANEJ SESJI
@@ -100,7 +99,8 @@ int main() {
                     tryb_gry = 2;
                 }
 
-
+                //PRZESUWAJ SIĘ PO REKORDACH MENU
+                menu = poruszaj_menu(menu, event);
 
                 //MENU GŁOWNE -WYBOR
                 if (event.key.code == sf::Keyboard::Enter && tryb_gry == 0)
@@ -117,7 +117,6 @@ int main() {
                             tryb_gry = 1;
                             break;
                         case 2:
-                            std::cout << "Pomoc..." << std::endl;
                             tryb_gry = 2;
                             break;
                         case 3:
@@ -131,8 +130,6 @@ int main() {
                             break;
                     }
                 }
-                //PRZESUWAJ SIĘ PO REKORDACH MENU
-                menu = poruszaj_menu(menu, event);
             }
         }
 
@@ -205,7 +202,6 @@ int main() {
         {
             plik = fopen("dane.dat", "w+b");
             zapiszDane(plik, dane);
-            std::cout << "Zapisano!"<< std::endl;
             tryb_gry = 0;
         }
 
@@ -222,11 +218,6 @@ int main() {
             if(flaga_pocisk)
                 window.draw(pocisk->getPocisk());
 
-
-
-            /*
-             Uruchamia ciąg mechaniki zakończenia gry (życie = 0), a następnie jej zrestartowania
-            */
             if(dane.zycie <= 0)
             {
                 gameOver* end = new gameOver;
@@ -242,15 +233,13 @@ int main() {
                     delete end;
                     gra_w_toku = false;
                     dane = generuj();
-                    trudnosc = dane.trudnosc;
                     przeciwnik.restart();
                     p1.restart(50,200);
+                    dane = set_trudnosc(trudnosc, dane);
                     czy_zrestartowano = false;
                 }
             }
         }
-
-
 
         //POKAZ STEROWANIE
         if(tryb_gry == 2)
@@ -272,6 +261,7 @@ int main() {
                 tryb_gry = 0;
             }
         }
+
         //POKAZ MENU GLOWNE
         if(tryb_gry==0)
         {
