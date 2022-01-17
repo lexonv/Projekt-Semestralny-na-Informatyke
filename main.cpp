@@ -71,7 +71,7 @@ int main() {
 
             //OBSLUGA POZIOMU TRUDNOSCI
             predkosc_przeciwnikow = zmieniaj_predkosc(trudnosc, dane);
-            obsluga_trudnosci(&przeciwnik, trudnosc, predkosc_przeciwnikow);
+            przeciwnik.move(-predkosc_przeciwnikow);
         }
 
 
@@ -227,6 +227,7 @@ int main() {
                     tryb_gry = 0;
                     delete end;
                     gra_w_toku = false;
+                    trudnosc = dane.trudnosc;
                     dane = generuj();
                     przeciwnik.restart();
                     p1.restart(50,200);

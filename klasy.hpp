@@ -320,6 +320,7 @@ Gracz generuj()
     dane.zycie = 3;
     dane.scores = 0;
     dane.czas = 0;
+    dane.trudnosc = 2;
     return dane;
 }
 
@@ -759,28 +760,27 @@ Menu poruszaj_menu(Menu menu, sf::Event event)
     return menu;
 }
 
-void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc, float dx)
-{
-    switch(trudnosc)
-    {
-        case 1:
-            przeciwnik->move(-dx);
-            break;
-        case 2:
-            przeciwnik->move(-dx);
-            break;
-        case 3:
-            przeciwnik->move(-dx);
-            break;
-        default:
-            przeciwnik->move(-dx);
-            break;
-    }
-}
+//void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc, float dx)
+//{
+//    switch(trudnosc)
+//    {
+//        case 1:
+//            przeciwnik->move(-dx);
+//            break;
+//        case 2:
+//            przeciwnik->move(-dx);
+//            break;
+//        case 3:
+//            przeciwnik->move(-dx);
+//            break;
+//        default:
+//            przeciwnik->move(-dx);
+//            break;
+//    }
+//}
 
 float zmieniaj_predkosc(int trudnosc, Gracz dane)
 {
-    float x;
     switch(trudnosc)
     {
         case 1:
