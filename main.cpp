@@ -15,9 +15,10 @@ int main() {
     bool gra_w_toku = false;
     bool czy_otwarto_sterowanie = false;
     bool czy_zrestartowano = false;
+    bool pokaz_powiadomienie = false;
 
     //ZEGARKI DO KONTROLI MECHANIK
-    sf::Clock zegar_kolizja, zegar_koniec, zegar_cooldown, zegar;
+    sf::Clock zegar_kolizja, zegar_koniec, zegar_cooldown, zegar, zegar_powiadomienie;
 
     //STWORZ TLO GRY
     Background tlo_gra(window.getSize().x, window.getSize().y, true);
@@ -41,7 +42,6 @@ int main() {
 
     while (window.isOpen())
     {
-
         sf::Event event;
         if(tryb_gry==1)
         {
@@ -102,7 +102,7 @@ int main() {
                 //PRZESUWAJ SIĘ PO REKORDACH MENU
                 menu = poruszaj_menu(menu, event);
 
-                //MENU GŁOWNE -WYBOR
+                //MENU GŁOWNE - WYBOR
                 if (event.key.code == sf::Keyboard::Enter && tryb_gry == 0)
                 {
                     switch (menu.getRekord())
@@ -157,7 +157,7 @@ int main() {
             }
         }
 
-        //WYBOR POZIOMU TRUDNOSCI
+        //POZIOM TRUDNOSCI
         if(tryb_gry == 4)
         {
             menu.poziomtrudnosci(window.getSize().x, window.getSize().y);
@@ -200,6 +200,7 @@ int main() {
         //ZAPISZ DO PLIKU
         if(tryb_gry == 3)
         {
+            pokaz_powiadomienie = true;
             plik = fopen("dane.dat", "w+b");
             zapiszDane(plik, dane);
             tryb_gry = 0;
@@ -269,6 +270,24 @@ int main() {
             tlo_menu.draw(window);
             menu.menuglowne(window.getSize().x, window.getSize().y);
             menu.draw(window);
+            //Pokaz napis "Zapisano" przy zapisie do pliku
+            if(pokaz_powiadomienie)
+            {
+                if(!czy_zrestartowano)
+                {
+                    zegar_powiadomienie.restart();
+                    czy_zrestartowano = true;
+                }
+                auto *powiadomienie = new Interfejs(true);
+                powiadomienie->update("Zapisano!", "");
+                powiadomienie->rysuj_interfejs(window);
+                if(zegar_powiadomienie.getElapsedTime().asSeconds() >= 1.0f)
+                {
+                    pokaz_powiadomienie = false;
+                    czy_zrestartowano = false;
+                    delete powiadomienie;
+                }
+            }
         }
         window.display();
     }

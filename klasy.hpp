@@ -430,7 +430,7 @@ void Interfejs::inicjuj_interfejs()
     UpperLeft->setFont(*czcionka);
     UpperLeft->setCharacterSize(18);
     UpperLeft->setPosition(20, 10);
-    UpperLeft->setFillColor(sf::Color::Black);
+    UpperLeft->setFillColor(sf::Color::White);
     UpperLeft->setStyle(sf::Text::Bold);
     UpperLeft->setString("DEBUG UPPERLEFT");
 
@@ -438,7 +438,7 @@ void Interfejs::inicjuj_interfejs()
     UpperRight->setFont(*czcionka);
     UpperRight->setCharacterSize(18);
     UpperRight->setPosition(230, 5);
-    UpperRight->setFillColor(sf::Color::Black);
+    UpperRight->setFillColor(sf::Color::White);
     UpperRight->setStyle(sf::Text::Bold);
     UpperRight->setString("DEBUG UPPERRIGHT");
 }
