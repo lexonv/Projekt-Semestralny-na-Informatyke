@@ -759,22 +759,71 @@ Menu poruszaj_menu(Menu menu, sf::Event event)
     return menu;
 }
 
-void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc)
+void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc, float dx)
 {
     switch(trudnosc)
     {
         case 1:
-            przeciwnik->move(-4);
+            przeciwnik->move(-dx);
             break;
         case 2:
-            przeciwnik->move(-5);
+            przeciwnik->move(-dx);
             break;
         case 3:
-            przeciwnik->move(-6);
+            przeciwnik->move(-dx);
             break;
         default:
-            przeciwnik->move(-5);
+            przeciwnik->move(-dx);
             break;
+    }
+}
+
+float zmieniaj_predkosc(int trudnosc, Gracz dane)
+{
+    float x;
+    switch(trudnosc)
+    {
+        case 1:
+            if(dane.czas < 10)
+                return 3;
+            if(dane.czas >= 10 && dane.czas < 20)
+                return 3.5;
+            if(dane.czas >= 20 && dane.czas < 30)
+                return 4;
+            if(dane.czas >= 30 && dane.czas < 40)
+                return 4.5;
+            if(dane.czas >= 40 && dane.czas < 50)
+                return 5;
+            if(dane.czas >= 50)
+                return 6;
+        case 2:
+            if(dane.czas < 10)
+                return 4;
+            if(dane.czas >= 10 && dane.czas < 20)
+                return 4.5;
+            if(dane.czas >= 20 && dane.czas < 30)
+                return 5;
+            if(dane.czas >= 30 && dane.czas < 40)
+                return 5.5;
+            if(dane.czas >= 40 && dane.czas < 50)
+                return 6;
+            if(dane.czas >= 50)
+                return 7;
+        case 3:
+            if(dane.czas < 10)
+                return 5;
+            if(dane.czas >= 10 && dane.czas < 20)
+                return 5.5;
+            if(dane.czas >= 20 && dane.czas < 30)
+                return 6;
+            if(dane.czas >= 30 && dane.czas < 40)
+                return 6.5;
+            if(dane.czas >= 40 && dane.czas < 50)
+                return 7;
+            if(dane.czas >= 50)
+                return 8;
+        default:
+            return 4;
     }
 }
 

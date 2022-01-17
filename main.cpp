@@ -11,6 +11,7 @@ int main() {
     Healthbar hp(20.0f, 0.0f);
 
     int trudnosc, tryb_gry = 0;
+    float predkosc_przeciwnikow;
     bool gra_w_toku = false, czy_otwarto_sterowanie = false, czy_zrestartowano = false, pokaz_powiadomienie = false;
 
     sf::Clock zegar_kolizja, zegar_koniec, zegar_cooldown, zegar, zegar_powiadomienie;
@@ -69,7 +70,8 @@ int main() {
             }
 
             //OBSLUGA POZIOMU TRUDNOSCI
-            obsluga_trudnosci(&przeciwnik, trudnosc);
+            predkosc_przeciwnikow = zmieniaj_predkosc(trudnosc, dane);
+            obsluga_trudnosci(&przeciwnik, trudnosc, predkosc_przeciwnikow);
         }
 
 
