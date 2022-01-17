@@ -707,6 +707,8 @@ void Background::draw(sf::RenderWindow &window)
 
 
 
+
+
 //GRAFICZNA OBSLUGA COOLDOWNU POCISKU
 int CD(sf::Clock zegar_pocisk)
 {
@@ -759,25 +761,6 @@ Menu poruszaj_menu(Menu menu, sf::Event event)
     }
     return menu;
 }
-
-//void obsluga_trudnosci(Enemy *przeciwnik, int trudnosc, float dx)
-//{
-//    switch(trudnosc)
-//    {
-//        case 1:
-//            przeciwnik->move(-dx);
-//            break;
-//        case 2:
-//            przeciwnik->move(-dx);
-//            break;
-//        case 3:
-//            przeciwnik->move(-dx);
-//            break;
-//        default:
-//            przeciwnik->move(-dx);
-//            break;
-//    }
-//}
 
 float zmieniaj_predkosc(int trudnosc, Gracz dane)
 {
